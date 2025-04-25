@@ -1,4 +1,5 @@
 import 'package:flow_stock/presentation/screens/venta_detalle_screen.dart';
+import 'package:flow_stock/providers/inventario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -34,6 +35,8 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   Future<void> _cargarTodo() async {
     final context = this.context;
+ /*   await Provider.of<InventarioProvider>(context, listen: false)
+        .cargarInventarioPorSucursal(idSucursal: _sucursalSeleccionada);*/
     await Provider.of<VentaProvider>(context, listen: false).cargarVentas();
     await Provider.of<SucursalProvider>(context, listen: false)
         .cargarSucursales();
@@ -194,7 +197,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
                               margin: const EdgeInsets.all(8.0),
                               child: ListTile(
                                 title: Text(
-                                    'Id: ${venta.idVenta} - Total Venta: \$${venta.total.toStringAsFixed(2)}',
+                                    'Venta: ${venta.idVenta} - Total Venta: \$${venta.total.toStringAsFixed(2)}',
                                     style: FlowstockTextStyles.listTitle),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

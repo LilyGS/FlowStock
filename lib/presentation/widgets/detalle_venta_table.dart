@@ -7,13 +7,15 @@ class DetalleVentaTable extends StatelessWidget {
   final List<VentaDetalle> detalles;
   final List<Producto> productos;
   final void Function(int index) onDelete;
+  final bool editable;
 
   const DetalleVentaTable({
-    Key? key,
+    super.key,
     required this.detalles,
     required this.productos,
     required this.onDelete,
-  }) : super(key: key);
+    this.editable = true, 
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +29,6 @@ class DetalleVentaTable extends StatelessWidget {
           style: FlowstockTextStyles.buttonAction,
         ),
         const SizedBox(height: 8),
-
-        // Encabezado de la tabla
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           decoration: BoxDecoration(
@@ -39,32 +39,27 @@ class DetalleVentaTable extends StatelessWidget {
             children: const [
               Expanded(
                   flex: 3,
-                  child: Text('PRODUCTO',
-                      style: FlowstockTextStyles.listTitle)),
+                  child:
+                      Text('PRODUCTO', style: FlowstockTextStyles.listTitle)),
               Expanded(
                   flex: 2,
-                  child: Text('UNIDAD',
-                      style: FlowstockTextStyles.listTitle)),
+                  child: Text('UNIDAD', style: FlowstockTextStyles.listTitle)),
               Expanded(
                   flex: 2,
-                  child: Text('PRECIO',
-                      style: FlowstockTextStyles.listTitle)),
+                  child: Text('PRECIO', style: FlowstockTextStyles.listTitle)),
               Expanded(
                   flex: 2,
-                  child: Text('CANTIDAD',
-                      style: FlowstockTextStyles.listTitle)),
+                  child:
+                      Text('CANTIDAD', style: FlowstockTextStyles.listTitle)),
               Expanded(
                   flex: 2,
-                  child: Text('SUBTOTAL',
-                      style: FlowstockTextStyles.listTitle)),
+                  child:
+                      Text('SUBTOTAL', style: FlowstockTextStyles.listTitle)),
               SizedBox(width: 40),
             ],
           ),
         ),
-
         const SizedBox(height: 4),
-
-        // Filas de la tabla
         ...detalles.asMap().entries.map((e) {
           final d = e.value;
           final prod =
@@ -89,18 +84,16 @@ class DetalleVentaTable extends StatelessWidget {
                 Expanded(flex: 2, child: Text('${d.cantidad}')),
                 Expanded(
                     flex: 2, child: Text('\$${d.subtotal.toStringAsFixed(2)}')),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black87),
-                  onPressed: () => onDelete(e.key),
-                ),
+                if (editable)
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.black87),
+                    onPressed: () => onDelete(e.key),
+                  ),
               ],
             ),
           );
         }),
-
         const SizedBox(height: 12),
-
-        // Total alineado con la columna Subtotal
         Align(
           alignment: Alignment.centerRight,
           child: Padding(

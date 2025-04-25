@@ -1,3 +1,4 @@
+import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/database/database_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
   List<Map<String, dynamic>> _datos = [];
   List<Map<String, dynamic>> _sucursales = [];
-  int? _sucursalSeleccionada; // null = todas
+  int? _sucursalSeleccionada;
 
   @override
   void initState() {
@@ -23,8 +24,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
 
   Future<void> _cargarSucursales() async {
     final db = await _databaseHelper.database;
-    final resultado =
-        await db.rawQuery('SELECT id_sucursal, nombre FROM sucursal');
+    final resultado = await db.rawQuery('SELECT id_sucursal, nombre FROM sucursal');
     setState(() {
       _sucursales = resultado;
     });
@@ -34,7 +34,12 @@ class _ReporteInventarioState extends State<ReporteInventario> {
     final db = await _databaseHelper.database;
 
     final resultados = await db.rawQuery('''
-      SELECT p.nombre AS producto, s.nombre AS sucursal, i.cantidad_disponible
+      SELECT 
+        p.nombre AS producto, 
+        p.unidad_medida,
+        5 as stock_minimo,
+        s.nombre AS sucursal, 
+        i.cantidad_disponible
       FROM inventario i
       JOIN producto p ON i.id_producto = p.id_producto
       JOIN sucursal s ON i.id_sucursal = s.id_sucursal
@@ -49,8 +54,11 @@ class _ReporteInventarioState extends State<ReporteInventario> {
 
   @override
   Widget build(BuildContext context) {
+    final int total = _datos.length;
+    final int criticos = _datos.where((d) => (d['cantidad_disponible'] ?? 0) < (d['stock_minimo'] ?? 5)).length;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Reporte de Inventario')),
+      appBar: AppBar(title: const Text(FlowstockConstants.titleReporteInv)),
       body: Column(
         children: [
           Padding(
@@ -71,6 +79,17 @@ class _ReporteInventarioState extends State<ReporteInventario> {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Total productos: $total'),
+                Text('Stock crítico: $criticos', style: TextStyle(color: criticos > 0 ? Colors.red : Colors.green)),
+              ],
+            ),
+          ),
+          const Divider(),
           Expanded(
             child: _datos.isEmpty
                 ? const Center(child: Text('Sin datos'))
@@ -79,16 +98,28 @@ class _ReporteInventarioState extends State<ReporteInventario> {
                     itemBuilder: (_, i) {
                       final d = _datos[i];
                       final stock = d['cantidad_disponible'] as num;
-                      return ListTile(
-                        title: Text(d['producto']),
-                        subtitle: Text('Sucursal: ${d['sucursal']}'),
-                        trailing: Text(
-                          'Stock: $stock',
-                          style: TextStyle(
-                            color: stock < 10 ? Colors.red : Colors.black,
-                            fontWeight: stock < 10
-                                ? FontWeight.bold
-                                : FontWeight.normal,
+                      final stockMinimo = d['stock_minimo'] ?? 5;
+                      final unidad = d['unidad_medida'] ?? 'unidad(es)';
+                      final esCritico = stock < stockMinimo;
+
+                      return Card(
+                        color: esCritico ? Colors.red.shade50 : null,
+                        child: ListTile(
+                          title: Text('${d['producto']} ($unidad)'),
+                          subtitle: Text('Sucursal: ${d['sucursal']} • Mínimo: $stockMinimo'),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Stock: $stock',
+                                style: TextStyle(
+                                  color: esCritico ? Colors.red : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (esCritico)
+                                const Icon(Icons.warning, color: Colors.red, size: 18),
+                            ],
                           ),
                         ),
                       );

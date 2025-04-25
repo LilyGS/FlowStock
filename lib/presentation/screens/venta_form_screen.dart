@@ -44,6 +44,36 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
   double get _total => _detalles.fold(0, (sum, d) => sum + d.subtotal);
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final sucursales =
+          Provider.of<SucursalProvider>(context, listen: false).sucursales;
+      if (sucursales.isNotEmpty) {
+        setState(() {
+          _sucursalId = sucursales.first.idSucursal;
+        });
+        Provider.of<InventarioProvider>(context, listen: false)
+            .cargarInventarioPorSucursal(idSucursal: _sucursalId);
+      }
+    });
+  }
+
+/*
+  @override
+  void initState() {
+    super.initState();
+    _cargarTodo();
+  }
+
+  Future<void> _cargarTodo() async {
+    final context = this.context;
+    await Provider.of<InventarioProvider>(context, listen: false)
+        .cargarInventarioPorSucursal(idSucursal: _sucursalId);
+  }
+*/
+  @override
   void dispose() {
     _precioController.dispose();
     _stockController.dispose();
@@ -124,8 +154,9 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
 
     final invProv = Provider.of<InventarioProvider>(context, listen: false);
     for (var detalle in _detalles) {
-      final inventario = invProv.inventario.firstWhere((inv) =>           
-          inv.idSucursal == _sucursalId && inv.idProducto == detalle.idProducto);
+      final inventario = invProv.inventario.firstWhere((inv) =>
+          inv.idSucursal == _sucursalId &&
+          inv.idProducto == detalle.idProducto);
 
       final inventarioActualizado = inventario.copyWith(
         cantidadDisponible: inventario.cantidadDisponible - detalle.cantidad,
@@ -171,13 +202,19 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                       ))
                   .toList(),
               onChanged: _detalles.isEmpty
-                  ? (value) => setState(() {
+                  ? (value) async {
+                      if (value == null) return;
+                      await Provider.of<InventarioProvider>(context,
+                              listen: false)
+                          .cargarInventarioPorSucursal(idSucursal: value);
+                      setState(() {
                         _sucursalId = value;
                         _productoSel = null;
                         _precioVenta = null;
                         _stockDisponible = null;
                         _cantidad = 1;
-                      })
+                      });
+                    }
                   : null,
               value: _sucursalId,
             ),
@@ -249,9 +286,9 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                       labelText: 'Disponibles',
                       border: OutlineInputBorder(),
                     ),
-                    initialValue: _stockDisponible != null
+                    /*    initialValue: _stockDisponible != null
                         ? _stockDisponible.toString()
-                        : '0',
+                        : '0',*/
                     readOnly: true,
                     enabled: false,
                   ),
@@ -265,9 +302,9 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                       labelText: 'Precio',
                       border: OutlineInputBorder(),
                     ),
-                    initialValue: _precioVenta != null
+                    /*    initialValue: _precioVenta != null
                         ? _precioVenta!.toStringAsFixed(2)
-                        : '0.00',
+                        : '0.00',*/
                     readOnly: true,
                     enabled: false,
                   ),

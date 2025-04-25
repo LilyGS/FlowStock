@@ -1,3 +1,4 @@
+import 'package:flow_stock/providers/venta_detalle_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flow_stock/presentation/screens/login_screen.dart';
@@ -29,6 +30,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductoProvider()),
         ChangeNotifierProvider(create: (_) => InventarioProvider()),
         ChangeNotifierProvider(create: (_) => VentaProvider()),
+        ChangeNotifierProvider(create: (_) => VentaDetalleProvider()),
       ],
       child: MaterialApp(
           title: 'Flow Stock',

@@ -1,3 +1,5 @@
+import 'package:flow_stock/presentation/screens/reporte_inventario.dart';
+import 'package:flow_stock/presentation/screens/reporte_ventas.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
@@ -10,7 +12,6 @@ import 'package:flow_stock/presentation/screens/login_screen.dart';
 import 'package:flow_stock/presentation/screens/inventario_list_screen.dart';
 import 'package:flow_stock/presentation/screens/reportes_screen.dart';
 import 'package:flow_stock/presentation/screens/venta_list_screen.dart';
-
 
 class HomeScreen extends StatelessWidget {
   final String rol;
@@ -122,7 +123,7 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildNavigationButton(
+                    /*  _buildNavigationButton(
                       context,
                       'Reportes',
                       Icons.search,
@@ -131,6 +132,29 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ReportesScreen()));
+                      },
+                    ),*/
+
+                    _buildNavigationButton(
+                      context,
+                      'Reporte de Ventas',
+                      Icons.bar_chart,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReporteVentas()));
+                      },
+                    ),
+                    _buildNavigationButton(
+                      context,
+                      'Reporte de Inventario',
+                      Icons.inventory,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReporteInventario()));
                       },
                     ),
                   ],

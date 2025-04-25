@@ -1,3 +1,4 @@
+import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/database/database_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
   Future<void> _cargarSucursales() async {
     final db = await _databaseHelper.database;
     final resultado =
-        await db.rawQuery('SELECT id_sucursal, nombre FROM sucursales');
+        await db.rawQuery('SELECT id_sucursal, nombre FROM sucursal');
     setState(() => _sucursales = resultado);
   }
 
@@ -41,7 +42,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
       args.add(_sucursalSeleccionada);
     }
     if (_fechaInicio != null && _fechaFin != null) {
-      condiciones.add('DATE(v.fecha) BETWEEN ? AND ?');
+      condiciones.add('DATE(v.fecha_venta) BETWEEN ? AND ?');
       args.add(_fechaInicio!.toIso8601String().substring(0, 10));
       args.add(_fechaFin!.toIso8601String().substring(0, 10));
     }
@@ -50,13 +51,13 @@ class _ReporteVentasState extends State<ReporteVentas> {
         condiciones.isNotEmpty ? 'WHERE ${condiciones.join(' AND ')}' : '';
 
     final resultado = await db.rawQuery('''
-      SELECT v.id_venta, v.fecha, v.total, v.metodo_pago, 
+      SELECT v.id_venta, v.fecha_venta, v.total, v.metodo_pago, 
              s.nombre AS sucursal, c.nombre AS cliente
-      FROM ventas v
-      JOIN sucursales s ON v.id_sucursal = s.id_sucursal
-      JOIN clientes c ON v.id_cliente = c.id_cliente
+      FROM venta v
+      JOIN sucursal s ON v.id_sucursal = s.id_sucursal
+      JOIN cliente c ON v.id_cliente = c.id_cliente
       $where
-      ORDER BY v.fecha DESC
+      ORDER BY v.fecha_venta DESC
     ''', args);
 
     setState(() => _ventas = resultado);
@@ -86,7 +87,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
     final f = DateFormat('yyyy-MM-dd');
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Listado de Ventas')),
+      appBar: AppBar(title: const Text(FlowstockConstants.titleReporteVta)),
       body: Column(
         children: [
           Padding(
@@ -139,7 +140,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
                       return ListTile(
                         leading: const Icon(Icons.receipt_long),
                         title: Text('${v['cliente']}'),
-                        subtitle: Text('${v['fecha']} - ${v['sucursal']}'),
+                        subtitle: Text('${v['fecha_venta']} - ${v['sucursal']}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
