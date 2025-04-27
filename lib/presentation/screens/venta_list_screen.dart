@@ -1,4 +1,3 @@
-import 'package:flow_stock/data/models/inventario.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,6 @@ import 'package:flow_stock/data/models/cliente.dart';
 import 'package:flow_stock/providers/venta_provider.dart';
 import 'package:flow_stock/providers/sucursal_provider.dart';
 import 'package:flow_stock/providers/cliente_provider.dart';
-import 'package:flow_stock/providers/inventario_provider.dart';
 
 class VentaListScreen extends StatefulWidget {
   const VentaListScreen({super.key});
@@ -36,8 +34,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   Future<void> _cargarTodo() async {
     final context = this.context;
-    /*   await Provider.of<InventarioProvider>(context, listen: false)
-        .cargarInventarioPorSucursal(idSucursal: _sucursalSeleccionada);*/
+
     await Provider.of<VentaProvider>(context, listen: false).cargarVentas();
     await Provider.of<SucursalProvider>(context, listen: false)
         .cargarSucursales();
@@ -56,7 +53,6 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final inventarioProvider = Provider.of<InventarioProvider>(context);
     final ventaProvider = Provider.of<VentaProvider>(context);
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final clienteProvider = Provider.of<ClienteProvider>(context);
@@ -65,12 +61,6 @@ class _VentaListScreenState extends State<VentaListScreen> {
     final clientes = clienteProvider.clientes;
 
     List<Venta> ventasFiltradas = ventaProvider.ventas;
-
-    /*  List<Inventario> inventarioFiltrado = _sucursalSeleccionada == null
-        ? inventarioProvider.inventario
-        : inventarioProvider.inventario
-            .where((inv) => inv.idSucursal == _sucursalSeleccionada)
-            .toList();*/
 
     if (_sucursalSeleccionada != null) {
       ventasFiltradas = ventasFiltradas
@@ -224,19 +214,19 @@ class _VentaListScreenState extends State<VentaListScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              'Venta: ${venta.idVenta}',
+                                              'Venta: ${venta.idVenta} - ${cliente.nombre.isNotEmpty ? cliente.nombre : 'SIN CLIENTE'}',
                                               style:
                                                   FlowstockTextStyles.listTitle,
                                             ),
                                           ),
                                           Expanded(
                                             child: Text(
-                                              cliente.nombre.isNotEmpty
-                                                  ? cliente.nombre
-                                                  : 'SIN CLIENTE',
+                                              '\$${venta.total.toStringAsFixed(2)}',
                                               style: FlowstockTextStyles
-                                                  .listSubTitle,
-                                              overflow: TextOverflow.ellipsis,
+                                                  .listSubTitle
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                               textAlign: TextAlign.end,
                                             ),
                                           ),
@@ -255,7 +245,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
                                           ),
                                           Expanded(
                                             child: Text(
-                                              sucursal.nombre,
+                                              venta.metodoPago,
                                               style: FlowstockTextStyles
                                                   .listSubTitle,
                                               overflow: TextOverflow.ellipsis,
@@ -269,20 +259,9 @@ class _VentaListScreenState extends State<VentaListScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              venta.metodoPago,
+                                              sucursal.nombre,
                                               style: FlowstockTextStyles
                                                   .listSubTitle,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              '\$${venta.total.toStringAsFixed(2)}',
-                                              style: FlowstockTextStyles
-                                                  .listSubTitle
-                                                  .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.end,
                                             ),
                                           ),
                                         ],

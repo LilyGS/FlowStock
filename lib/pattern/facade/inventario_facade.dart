@@ -13,7 +13,7 @@ class InventarioFacade {
         'inventario',
         inventario.toMap(),
         'id_sucursal = ? AND id_producto = ?',
-         [inventario.idSucursal, inventario.idProducto]);
+        [inventario.idSucursal, inventario.idProducto]);
   }
 
   Future<List<Inventario>> obtenerInventario() async {
@@ -24,19 +24,39 @@ class InventarioFacade {
 
   Future<List<Inventario>> obtenerInventarioPorSucursal(int? idSucursal) async {
     // Si no se seleccionó una sucursal, traer todo el inventario
-  if (idSucursal == null) {
-    final data = await _databaseHelper.query('inventario');
+    if (idSucursal == null) {
+      final data = await _databaseHelper.query('inventario');
+      return data.map((e) => Inventario.fromMap(e)).toList();
+    }
+
+    // Si hay sucursal seleccionada, traer solo los registros de esa sucursal
+    final data = await _databaseHelper.query(
+      'inventario',
+      where: 'id_sucursal = ?',
+      whereArgs: [idSucursal],
+    );
+
     return data.map((e) => Inventario.fromMap(e)).toList();
   }
 
-  // Si hay sucursal seleccionada, traer solo los registros de esa sucursal
-  final data = await _databaseHelper.query(
-    'inventario',
-    where: 'id_sucursal = ?',
-    whereArgs: [idSucursal],
-  );
+  Future<List<Inventario>> consultarInventario(
+      {int? idSucursal}) async {
+    final db = await _databaseHelper.database;
 
-  return data.map((e) => Inventario.fromMap(e)).toList();
-}
+    final data = await db.rawQuery('''
+      SELECT 
+        p.nombre AS producto, 
+        p.unidad_medida,
+        5 as stock_minimo,
+        s.nombre AS sucursal, 
+        i.cantidad_disponible
+      FROM inventario i
+      JOIN producto p ON i.id_producto = p.id_producto
+      JOIN sucursal s ON i.id_sucursal = s.id_sucursal
+      ${idSucursal != null ? 'WHERE i.id_sucursal = ?' : ''}
+      ORDER BY s.nombre, p.nombre
+    ''', idSucursal != null ? [idSucursal] : []);
 
+    return data.map((e) => Inventario.fromMap(e)).toList();
+  }
 }

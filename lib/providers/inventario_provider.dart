@@ -54,4 +54,14 @@ class InventarioProvider with ChangeNotifier {
       /* orElse: () => null,*/
     );
   }
+
+  Future<void> consultarInventario({int? idSucursal}) async {
+    _inventario = await _facade.consultarInventario(idSucursal: idSucursal);
+    notifyListeners();
+  }
+
+  void limpiarInventario() {
+    _inventario = [];
+    notifyListeners();
+  }
 }

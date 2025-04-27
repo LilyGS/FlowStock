@@ -1,14 +1,20 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import 'package:flow_stock/core/constant/flowstock_constants.dart';
+import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
+
 import 'package:flow_stock/data/models/cliente.dart';
 import 'package:flow_stock/data/models/sucursal.dart';
+import 'package:flow_stock/data/models/venta.dart';
+
 import 'package:flow_stock/providers/cliente_provider.dart';
 import 'package:flow_stock/providers/sucursal_provider.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flow_stock/data/models/venta.dart';
 import 'package:flow_stock/providers/producto_provider.dart';
 import 'package:flow_stock/providers/venta_detalle_provider.dart';
 import 'package:flow_stock/presentation/widgets/detalle_venta_table.dart';
-import 'package:provider/provider.dart';
+
 
 class VentaDetalleScreen extends StatefulWidget {
   final Venta venta;
@@ -57,7 +63,7 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Venta #${widget.venta.idVenta}'),
+        title: Text(FlowstockConstants.titleDetVenta),
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())
@@ -87,28 +93,33 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Sucursal: ${widget.venta.idSucursal} - ${sucursal.nombre}',
+          'Venta: ${widget.venta.idVenta}',
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 4),
         Text(
-          'Cliente: ${widget.venta.idCliente?.toString()} - ${cliente.nombre}',
+          'Sucursal: ${sucursal.nombre}',
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 4),
         Text(
-          'Fecha: ${widget.venta.fechaVenta}',
+          'Cliente: ${cliente.nombre}',
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 4),
         Text(
-          'Método de pago: ${widget.venta.metodoPago}',
+          'Fecha: ${DateFormat('yyyy-MM-dd').format(widget.venta.fechaVenta)}',
+          style: const TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Método pago: ${widget.venta.metodoPago}',
           style: const TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 4),
         Text(
           'Total: \$${widget.venta.total.toStringAsFixed(2)}',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: FlowstockTextStyles.buttonAction,
         ),
       ],
     );

@@ -39,7 +39,6 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
     _nombreController.dispose();
     _ubicacionController.dispose();
     _telefonoController.dispose();
-    //_presupuestoController.dispose();
     super.dispose();
   }
 
@@ -69,7 +68,6 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
     if (!mounted) return;
     Navigator.pop(context, true);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -118,24 +116,6 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
                   return null;
                 },
               ),
-
-              /*
-              const SizedBox(height: 16),
-              Text('Fecha de apertura: ${_fechaSeleccionada != null ? DateFormat('yyyy-MM-dd').format(_fechaSeleccionada!) : ''}'),
-              TextButton.icon(
-                onPressed: _seleccionarFecha,
-                icon: const Icon(Icons.calendar_today),
-                label: const Text('Seleccionar fecha'),
-              ),
-              TextFormField(
-                controller: _presupuestoController,
-                decoration: const InputDecoration(labelText: 'Presupuesto (MXN)'),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                validator: (value) =>
-                    (double.tryParse(value ?? '') == null) ? 'Ingrese un valor numérico' : null,
-              ),
-
-              */
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -1,7 +1,9 @@
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/database/database_helper.dart';
+import 'package:flow_stock/providers/sucursal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ReporteVentas extends StatefulWidget {
   const ReporteVentas({super.key});
@@ -13,7 +15,6 @@ class ReporteVentas extends StatefulWidget {
 class _ReporteVentasState extends State<ReporteVentas> {
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
   List<Map<String, dynamic>> _ventas = [];
-  List<Map<String, dynamic>> _sucursales = [];
   int? _sucursalSeleccionada;
   DateTime? _fechaInicio;
   DateTime? _fechaFin;
@@ -21,15 +22,16 @@ class _ReporteVentasState extends State<ReporteVentas> {
   @override
   void initState() {
     super.initState();
-    _cargarSucursales();
+
+    _cargarSucursal();
     _consultarVentas();
   }
 
-  Future<void> _cargarSucursales() async {
-    final db = await _databaseHelper.database;
-    final resultado =
-        await db.rawQuery('SELECT id_sucursal, nombre FROM sucursal');
-    setState(() => _sucursales = resultado);
+  Future<void> _cargarSucursal() async {
+    final context = this.context;
+
+    await Provider.of<SucursalProvider>(context, listen: false)
+        .cargarSucursales();
   }
 
   Future<void> _consultarVentas() async {
@@ -84,6 +86,8 @@ class _ReporteVentasState extends State<ReporteVentas> {
 
   @override
   Widget build(BuildContext context) {
+    final sucursalProvider = Provider.of<SucursalProvider>(context);
+    final sucursales = sucursalProvider.sucursales;
     final f = DateFormat('yyyy-MM-dd');
 
     return Scaffold(
@@ -100,9 +104,9 @@ class _ReporteVentasState extends State<ReporteVentas> {
                   value: _sucursalSeleccionada,
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Todas')),
-                    ..._sucursales.map((s) => DropdownMenuItem(
-                          value: s['id_sucursal'] as int,
-                          child: Text(s['nombre']),
+                    ...sucursales.map((s) => DropdownMenuItem(
+                          value: s.idSucursal as int,
+                          child: Text(s.nombre),
                         )),
                   ],
                   onChanged: (val) {
@@ -162,8 +166,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
                     itemCount: _ventas.length,
                     itemBuilder: (_, i) {
                       final v = _ventas[i];
-                      final clienteNombre =
-                          v['cliente'] ?? 'SIN CLIENTE';
+                      final clienteNombre = v['cliente'] ?? 'SIN CLIENTE';
                       final fechav = DateFormat('yyyy-MM-dd')
                           .format(DateTime.parse(v['fecha_venta']));
 

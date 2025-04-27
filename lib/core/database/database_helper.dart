@@ -9,7 +9,7 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('lgs5_erp_master.db');
+    _database = await _initDB('flowstock_erp_master.db');
     return _database!;
   }
 
@@ -21,9 +21,7 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // ON DELETE CASCADE Para que se borren los productos de la sucursal al borrar la sucursal
-    // quite esa opción porque manejo la opción de inventario
-
+   
     // Para activar las llaves foraneas
     await db.execute('PRAGMA foreign_keys = ON');
 
@@ -110,25 +108,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Transacciones (tabla)
-    await db.execute('''
-    CREATE TABLE transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      amount REAL NOT NULL,
-      payment_method TEXT NOT NULL,
-      status TEXT NOT NULL,
-      date TEXT NOT NULL,
-      description TEXT )
-    ''');
-
-    // Métodos de pago
-    await db.execute('''
-    CREATE TABLE payment_method (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      is_active BOOLEAN NOT NULL DEFAULT 1
-    )
-    ''');
+      
 
     final batch = db.batch();
 
@@ -136,7 +116,7 @@ class DatabaseHelper {
     batch.insert('usuario', {
       'nombre': 'Administrador',
       'correo': 'admin@fs.com',
-      'contrasena': '123456',
+      'contrasena': '123',
       'rol': 'admin',
       'status': 'activo',
     });
@@ -144,7 +124,7 @@ class DatabaseHelper {
     batch.insert('usuario', {
       'nombre': 'Vend1',
       'correo': 'vend1@fs.com',
-      'contrasena': '123456',
+      'contrasena': '123',
       'rol': 'vendedor',
       'status': 'activo',
     });
@@ -152,39 +132,18 @@ class DatabaseHelper {
     // Insertar sucursales predeterminadas
     batch.insert('sucursal', {
       'nombre': 'Matriz',
-      'ubicacion': 'Calle 123, Colonia 456, Ciudad 789',
-      'telefono': '477 780 92 11',
+      'ubicacion': 'Calle Av. Universidad 602, Col. Lomas del Campestre, León Gto.',
+      'telefono': '477 710 85 00',
       'status': 'activo'
     });
     batch.insert('sucursal', {
-      'nombre': 'Sucursal León',
-      'ubicacion': 'Calle Av. Universidad, Col. Lomas del Campestre, León Gto.',
+      'nombre': 'Sucursal Centro',
+      'ubicacion': 'Calle Madero, Col. Centro, León Gto.',
       'telefono': '477 711 37 61',
       'status': 'activo'
     });
 
-    // Insertar métodos de pago predeterminados
-    batch.insert('payment_method', {
-      'name': 'credit_card',
-      'is_active': 1,
-    });
-    batch.insert('payment_method', {
-      'name': 'debit_card',
-      'is_active': 1,
-    });
-    batch.insert('payment_method', {
-      'name': 'paypal',
-      'is_active': 1,
-    });
-    batch.insert('payment_method', {
-      'name': 'bank_transfer',
-      'is_active': 1,
-    });
-    batch.insert('payment_method', {
-      'name': 'cash',
-      'is_active': 1,
-    });
-
+   
     await batch.commit();
   }
 
@@ -243,125 +202,6 @@ class DatabaseHelper {
     );
   }
 
-  // Obtener transacciones dentro de un rango de fechas
-  Future<List<Map<String, dynamic>>> getTransactionsByDate(
-      DateTime startDate, DateTime endDate) async {
-    Database db = await instance.database;
-    return await db.query('transactions',
-        where: 'date BETWEEN ? AND ?',
-        whereArgs: [startDate.toIso8601String(), endDate.toIso8601String()],
-        orderBy: 'date DESC');
-  }
-
-  // Obtener transacciones por status
-  Future<List<Map<String, dynamic>>> getTransactionsByStatus(
-      String status) async {
-    Database db = await instance.database;
-    return await db.query('transactions',
-        where: 'status = ?', whereArgs: [status], orderBy: 'date DESC');
-  }
-
-  Future<void> togglePaymentMethod(int id, bool isActive) async {
-    Database db = await instance.database;
-    await db.update('payment_method', {'is_active': isActive ? 1 : 0},
-        where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<List<Map<String, dynamic>>> getActivePaymentsMethods() async {
-    Database db = await instance.database;
-    return await db
-        .query('payment_method', where: 'is_active = ?', whereArgs: [1]);
-  }
+ 
 }
 
-
-/*
-
-import 'package:sqflite/sqflite.dart';
-import '../models/inventario.dart';
-
-class InventarioDB {
-  final Database db;
-
-  InventarioDB(this.db);
-
-  Future<void> insert(Inventario inv) async {
-    await db.insert(
-      'inventario',
-      inv.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  Future<List<Inventario>> getAll() async {
-    final maps = await db.query('inventario');
-    return maps.map((map) => Inventario.fromMap(map)).toList();
-  }
-
-  Future<void> update(Inventario inv) async {
-    await db.update(
-      'inventario',
-      inv.toMap(),
-      where: 'id_sucursal = ? AND id_producto = ?',
-      whereArgs: [inv.idSucursal, inv.idProducto],
-    );
-  }
-
-  Future<void> delete(int idSucursal, int idProducto) async {
-    await db.delete(
-      'inventario',
-      where: 'id_sucursal = ? AND id_producto = ?',
-      whereArgs: [idSucursal, idProducto],
-    );
-  }
-}
-
-
-
-
-
-import 'package:sqflite/sqflite.dart';
-import '../models/venta.dart';
-import '../models/detalle_venta.dart';
-
-class VentasDB {
-  final Database db;
-
-  VentasDB(this.db);
-
-  // Insertar una venta
-  Future<int> insertVenta(Venta venta) async {
-    return await db.insert(
-      'ventas',
-      venta.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  // Insertar un detalle de venta
-  Future<void> insertDetalleVenta(DetalleVenta detalle) async {
-    await db.insert(
-      'detalle_venta',
-      detalle.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  // Obtener todas las ventas
-  Future<List<Venta>> getVentas() async {
-    final maps = await db.query('ventas');
-    return maps.map((map) => Venta.fromMap(map)).toList();
-  }
-
-  // Obtener detalles de una venta específica
-  Future<List<DetalleVenta>> getDetallesVenta(int idVenta) async {
-    final maps = await db.query(
-      'detalle_venta',
-      where: 'id_venta = ?',
-      whereArgs: [idVenta],
-    );
-    return maps.map((map) => DetalleVenta.fromMap(map)).toList();
-  }
-}
-
-*/

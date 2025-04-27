@@ -18,8 +18,6 @@ import 'package:flow_stock/presentation/widgets/detalle_venta_table.dart';
 class VentaFormScreen extends StatefulWidget {
   const VentaFormScreen({super.key});
 
-  get paymentFacade => null;
-
   @override
   State<VentaFormScreen> createState() => _VentaFormScreenState();
 }
