@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/pattern/facade/payment_facade.dart';
 import 'package:flow_stock/presentation/widgets/payment_card.dart';
@@ -139,29 +138,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  ...FlowstockConstants.paymentMethods.entries.map((entry) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: PaymentCard(
-                          method: entry.key,
-                          isSelect: _selectedMethod == entry.key,
-                          onTap: () {
-                            setState(() {
-                              _selectedMethod = entry.key;
-                            });
-                          }))),
+                  ...FlowstockConstants.paymentMethods.entries
+                      .map((entry) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: PaymentCard(
+                              method: entry.key,
+                              isSelect: _selectedMethod == entry.key,
+                              onTap: () {
+                                setState(() {
+                                  _selectedMethod = entry.key;
+                                });
+                              }))),
                   const SizedBox(
                     height: 24,
                   ),
                   ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
-                      onPressed: _isProcessing ? null : _processPayment,
-                      child: _isProcessing
-                          ? const CircularProgressIndicator()
-                          : const Text('Procesar pago',
-                              style: TextStyle(fontSize: 10)))
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8))),
+                    onPressed: _isProcessing ? null : _processPayment,
+                    child: _isProcessing
+                        ? const CircularProgressIndicator()
+                        : const Text('Procesar pago',
+                            style: TextStyle(fontSize: 10)),
+                  )
                 ],
               ))),
     );

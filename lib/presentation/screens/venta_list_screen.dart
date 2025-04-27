@@ -1,5 +1,4 @@
-import 'package:flow_stock/presentation/screens/venta_detalle_screen.dart';
-import 'package:flow_stock/providers/inventario_provider.dart';
+import 'package:flow_stock/data/models/inventario.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 import 'package:flow_stock/presentation/screens/venta_form_screen.dart';
+import 'package:flow_stock/presentation/screens/venta_detalle_screen.dart';
 
 import 'package:flow_stock/data/models/venta.dart';
 import 'package:flow_stock/data/models/sucursal.dart';
@@ -15,6 +15,7 @@ import 'package:flow_stock/data/models/cliente.dart';
 import 'package:flow_stock/providers/venta_provider.dart';
 import 'package:flow_stock/providers/sucursal_provider.dart';
 import 'package:flow_stock/providers/cliente_provider.dart';
+import 'package:flow_stock/providers/inventario_provider.dart';
 
 class VentaListScreen extends StatefulWidget {
   const VentaListScreen({super.key});
@@ -35,7 +36,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   Future<void> _cargarTodo() async {
     final context = this.context;
- /*   await Provider.of<InventarioProvider>(context, listen: false)
+    /*   await Provider.of<InventarioProvider>(context, listen: false)
         .cargarInventarioPorSucursal(idSucursal: _sucursalSeleccionada);*/
     await Provider.of<VentaProvider>(context, listen: false).cargarVentas();
     await Provider.of<SucursalProvider>(context, listen: false)
@@ -55,6 +56,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final inventarioProvider = Provider.of<InventarioProvider>(context);
     final ventaProvider = Provider.of<VentaProvider>(context);
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final clienteProvider = Provider.of<ClienteProvider>(context);
@@ -63,6 +65,12 @@ class _VentaListScreenState extends State<VentaListScreen> {
     final clientes = clienteProvider.clientes;
 
     List<Venta> ventasFiltradas = ventaProvider.ventas;
+
+    /*  List<Inventario> inventarioFiltrado = _sucursalSeleccionada == null
+        ? inventarioProvider.inventario
+        : inventarioProvider.inventario
+            .where((inv) => inv.idSucursal == _sucursalSeleccionada)
+            .toList();*/
 
     if (_sucursalSeleccionada != null) {
       ventasFiltradas = ventasFiltradas
@@ -194,29 +202,9 @@ class _VentaListScreenState extends State<VentaListScreen> {
                             );
 
                             return Card(
-                              margin: const EdgeInsets.all(8.0),
-                              child: ListTile(
-                                title: Text(
-                                    'Venta: ${venta.idVenta} - Total Venta: \$${venta.total.toStringAsFixed(2)}',
-                                    style: FlowstockTextStyles.listTitle),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Sucursal: ${sucursal.nombre}',
-                                        style:
-                                            FlowstockTextStyles.listSubTitle),
-                                    Text('Cliente: ${cliente.nombre}',
-                                        style:
-                                            FlowstockTextStyles.listSubTitle),
-                                    Text('Método Pago: ${venta.metodoPago}',
-                                        style:
-                                            FlowstockTextStyles.listSubTitle),
-                                    Text(
-                                        'Fecha venta: ${DateFormat('yyyy-MM-dd').format(venta.fechaVenta)}',
-                                        style:
-                                            FlowstockTextStyles.listSubTitle),
-                                  ],
-                                ),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: InkWell(
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -226,6 +214,82 @@ class _VentaListScreenState extends State<VentaListScreen> {
                                     ),
                                   );
                                 },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              'Venta: ${venta.idVenta}',
+                                              style:
+                                                  FlowstockTextStyles.listTitle,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              cliente.nombre.isNotEmpty
+                                                  ? cliente.nombre
+                                                  : 'SIN CLIENTE',
+                                              style: FlowstockTextStyles
+                                                  .listSubTitle,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.end,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(venta.fechaVenta),
+                                              style: FlowstockTextStyles
+                                                  .listSubTitle,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              sucursal.nombre,
+                                              style: FlowstockTextStyles
+                                                  .listSubTitle,
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.end,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              venta.metodoPago,
+                                              style: FlowstockTextStyles
+                                                  .listSubTitle,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '\$${venta.total.toStringAsFixed(2)}',
+                                              style: FlowstockTextStyles
+                                                  .listSubTitle
+                                                  .copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.end,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             );
                           },

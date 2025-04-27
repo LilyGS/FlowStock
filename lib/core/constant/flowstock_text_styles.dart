@@ -7,6 +7,11 @@ class FlowstockTextStyles {
     color: Colors.white,
   );
 
+  static const TextStyle title2 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+  );
+
   static const TextStyle titleAppBar =
       TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white);
 

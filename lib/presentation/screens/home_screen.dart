@@ -10,7 +10,6 @@ import 'package:flow_stock/presentation/screens/usuario_list_screen.dart';
 import 'package:flow_stock/presentation/screens/sucursal_list_screen.dart';
 import 'package:flow_stock/presentation/screens/login_screen.dart';
 import 'package:flow_stock/presentation/screens/inventario_list_screen.dart';
-import 'package:flow_stock/presentation/screens/reportes_screen.dart';
 import 'package:flow_stock/presentation/screens/venta_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -27,7 +26,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          'Flow Stock',
+          'FLOW STOCK',
           style: FlowstockTextStyles.titleAppBar,
         ),
         centerTitle: true,
@@ -58,19 +57,29 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildNavigationButton(
-                        context, 'Usuarios', Icons.people_alt_rounded, () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UsuarioListScreen()));
-                    }),
-                    _buildNavigationButton(context, 'Sucursales', Icons.store,
-                        () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SucursalListScreen()));
-                    }),
+                      context,
+                      'Usuarios',
+                      Icons.people_alt_rounded,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UsuarioListScreen()));
+                      },
+                      color: Colors.yellow.shade700,
+                    ),
+                    _buildNavigationButton(
+                      context,
+                      'Sucursales',
+                      Icons.store,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SucursalListScreen()));
+                      },
+                      color: Colors.yellow.shade700,
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -80,24 +89,87 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildNavigationButton(
-                        context, 'Productos', Icons.add_business_rounded, () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProductoListScreen()));
-                    }),
+                      context,
+                      'Clientes',
+                      Icons.insert_chart_outlined_rounded,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ClienteListScreen()));
+                      },
+                      color: Colors.yellow.shade700,
+                    ),
+                    _buildNavigationButton(
+                      context,
+                      'Productos',
+                      Icons.add_business_rounded,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductoListScreen()));
+                      },
+                      color: Colors.yellow.shade700,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
                     _buildNavigationButton(context, 'Inventario',
                         Icons.insert_chart_outlined_rounded, () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => InventarioListScreen()));
+                    }),
+                    _buildNavigationButton(
+                        context, 'Ventas', Icons.point_of_sale_rounded, () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VentaListScreen()));
                     })
                   ],
                 ),
                 SizedBox(
                   height: 20,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNavigationButton(
+                      context,
+                      'Reporte de Ventas',
+                      Icons.bar_chart,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReporteVentas()));
+                      },
+                      color: Colors.green,
+                    ),
+                    _buildNavigationButton(
+                      context,
+                      'Reporte de Inventario',
+                      Icons.inventory,
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReporteInventario()));
+                      },
+                      color: Colors.green,
+                    ),
+                  ],
+                ),
+              ],
+              if (isVendedor) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -117,73 +189,6 @@ class HomeScreen extends StatelessWidget {
                     })
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    /*  _buildNavigationButton(
-                      context,
-                      'Reportes',
-                      Icons.search,
-                      () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReportesScreen()));
-                      },
-                    ),*/
-
-                    _buildNavigationButton(
-                      context,
-                      'Reporte de Ventas',
-                      Icons.bar_chart,
-                      () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReporteVentas()));
-                      },
-                    ),
-                    _buildNavigationButton(
-                      context,
-                      'Reporte de Inventario',
-                      Icons.inventory,
-                      () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReporteInventario()));
-                      },
-                    ),
-                  ],
-                ),
-              ],
-              if (isVendedor) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildNavigationButton(
-                        context, 'Ventas', Icons.point_of_sale_rounded, () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VentaListScreen()));
-                    }),
-                    _buildNavigationButton(
-                      context,
-                      'Reportes',
-                      Icons.search,
-                      () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ReportesScreen()));
-                      },
-                    ),
-                  ],
-                ),
               ],
             ],
           ),
@@ -192,14 +197,19 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigationButton(BuildContext context, String text,
-      IconData icon, VoidCallback onPressed) {
+  Widget _buildNavigationButton(
+    BuildContext context,
+    String text,
+    IconData icon,
+    VoidCallback onPressed, {
+    Color color = Colors.blueAccent,
+  }) {
     return Column(
       children: [
         ElevatedButton(
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: color,
             shape: const CircleBorder(),
             fixedSize: const Size(115, 115),
             elevation: 10,

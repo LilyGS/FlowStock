@@ -55,7 +55,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
              s.nombre AS sucursal, c.nombre AS cliente
       FROM venta v
       JOIN sucursal s ON v.id_sucursal = s.id_sucursal
-      JOIN cliente c ON v.id_cliente = c.id_cliente
+      LEFT JOIN cliente c ON v.id_cliente = c.id_cliente
       $where
       ORDER BY v.fecha_venta DESC
     ''', args);
@@ -95,7 +95,8 @@ class _ReporteVentasState extends State<ReporteVentas> {
             child: Column(
               children: [
                 DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(labelText: 'Sucursal'),
+                  decoration: const InputDecoration(
+                      labelText: 'Sucursal', border: OutlineInputBorder()),
                   value: _sucursalSeleccionada,
                   items: [
                     const DropdownMenuItem(value: null, child: Text('Todas')),
@@ -109,24 +110,48 @@ class _ReporteVentasState extends State<ReporteVentas> {
                     _consultarVentas();
                   },
                 ),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
-                      child: TextButton(
-                        onPressed: () => _seleccionarFecha(context, true),
-                        child: Text(
-                            'Inicio: ${_fechaInicio != null ? f.format(_fechaInicio!) : '---'}'),
+                      child: InkWell(
+                        onTap: () => _seleccionarFecha(context, true),
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'Fecha Inicio',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 16),
+                          ),
+                          child: Text(
+                            _fechaInicio != null
+                                ? f.format(_fechaInicio!)
+                                : '---',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 8),
                     Expanded(
-                      child: TextButton(
-                        onPressed: () => _seleccionarFecha(context, false),
-                        child: Text(
-                            'Fin: ${_fechaFin != null ? f.format(_fechaFin!) : '---'}'),
+                      child: InkWell(
+                        onTap: () => _seleccionarFecha(context, false),
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'Fecha Fin',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 16),
+                          ),
+                          child: Text(
+                            _fechaFin != null ? f.format(_fechaFin!) : '---',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -137,10 +162,16 @@ class _ReporteVentasState extends State<ReporteVentas> {
                     itemCount: _ventas.length,
                     itemBuilder: (_, i) {
                       final v = _ventas[i];
+                      final clienteNombre =
+                          v['cliente'] ?? 'SIN CLIENTE';
+                      final fechav = DateFormat('yyyy-MM-dd')
+                          .format(DateTime.parse(v['fecha_venta']));
+
                       return ListTile(
                         leading: const Icon(Icons.receipt_long),
-                        title: Text('${v['cliente']}'),
-                        subtitle: Text('${v['fecha_venta']} - ${v['sucursal']}'),
+                        title: Text(
+                            'Venta: ${v['id_venta']} - Cliente: $clienteNombre'),
+                        subtitle: Text('Fecha: $fechav - ${v['sucursal']}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

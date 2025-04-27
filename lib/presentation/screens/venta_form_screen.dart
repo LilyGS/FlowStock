@@ -1,16 +1,14 @@
-import 'package:flow_stock/core/constant/flowstock_constants.dart';
-import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
-import 'package:flow_stock/data/models/inventario.dart';
-import 'package:flow_stock/presentation/screens/payment_screen.dart';
-
-import 'package:flow_stock/providers/cliente_provider.dart';
-import 'package:flow_stock/providers/inventario_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'package:flow_stock/core/constant/flowstock_constants.dart';
+import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
+import 'package:flow_stock/data/models/inventario.dart';
 import 'package:flow_stock/data/models/venta.dart';
 import 'package:flow_stock/data/models/venta_detalle.dart';
 import 'package:flow_stock/data/models/producto.dart';
+import 'package:flow_stock/providers/cliente_provider.dart';
+import 'package:flow_stock/providers/inventario_provider.dart';
 import 'package:flow_stock/providers/sucursal_provider.dart';
 import 'package:flow_stock/providers/producto_provider.dart';
 import 'package:flow_stock/providers/venta_provider.dart';
@@ -40,6 +38,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
   int? _stockDisponible;
 
   final List<VentaDetalle> _detalles = [];
+  bool _isProcessing = false;
 
   double get _total => _detalles.fold(0, (sum, d) => sum + d.subtotal);
 
@@ -60,19 +59,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
     });
   }
 
-/*
-  @override
-  void initState() {
-    super.initState();
-    _cargarTodo();
-  }
-
-  Future<void> _cargarTodo() async {
-    final context = this.context;
-    await Provider.of<InventarioProvider>(context, listen: false)
-        .cargarInventarioPorSucursal(idSucursal: _sucursalId);
-  }
-*/
   @override
   void dispose() {
     _precioController.dispose();
@@ -124,49 +110,66 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
     });
   }
 
-  Future<void> _showPaymentScreen() async {
-    final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PaymentScreen(
-                  paymentFacade: widget.paymentFacade,
-                )));
-  }
-
   Future<void> _guardarVenta() async {
     if (_sucursalId == null || _detalles.isEmpty || _metodoPago == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Faltan datos')),
+        const SnackBar(
+            content: Text(
+                'Por favor completa los campos requeridos (Sucursal, Método pago o Detalles de la venta)')),
       );
       return;
     }
-    final venta = Venta(
-      idVenta: null,
-      fechaVenta: DateTime.now(),
-      idSucursal: _sucursalId!,
-      idCliente: _clienteId,
-      metodoPago: _metodoPago!,
-      total: _total,
-      status: 'activo',
-    );
-    await Provider.of<VentaProvider>(context, listen: false)
-        .agregarVenta(venta, _detalles);
 
-    final invProv = Provider.of<InventarioProvider>(context, listen: false);
-    for (var detalle in _detalles) {
-      final inventario = invProv.inventario.firstWhere((inv) =>
-          inv.idSucursal == _sucursalId &&
-          inv.idProducto == detalle.idProducto);
+    setState(() {
+      _isProcessing = true;
+    });
 
-      final inventarioActualizado = inventario.copyWith(
-        cantidadDisponible: inventario.cantidadDisponible - detalle.cantidad,
+    try {
+      final venta = Venta(
+        idVenta: null,
+        fechaVenta: DateTime.now(),
+        idSucursal: _sucursalId!,
+        idCliente: _clienteId,
+        metodoPago: _metodoPago!,
+        total: _total,
+        status: 'activo',
       );
+      await Provider.of<VentaProvider>(context, listen: false)
+          .agregarVenta(venta, _detalles);
 
-      await invProv.actualizarInventario(inventarioActualizado);
+      final invProv = Provider.of<InventarioProvider>(context, listen: false);
+      for (var detalle in _detalles) {
+        final inventario = invProv.inventario.firstWhere((inv) =>
+            inv.idSucursal == _sucursalId &&
+            inv.idProducto == detalle.idProducto);
+
+        final inventarioActualizado = inventario.copyWith(
+          cantidadDisponible: inventario.cantidadDisponible - detalle.cantidad,
+        );
+
+        await invProv.actualizarInventario(inventarioActualizado);
+      }
+      await Future.delayed(const Duration(seconds: 5));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Pago registrado exitosamente.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pop(context, true);
+    } catch (ex) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(FlowstockConstants.errorGeneral),
+        backgroundColor: Colors.red,
+      ));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
-
-    if (!mounted) return;
-    Navigator.pop(context, true);
   }
 
   @override
@@ -176,7 +179,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
     final prodProv = Provider.of<ProductoProvider>(context);
     final invProv = Provider.of<InventarioProvider>(context);
 
-    // productos con stock en sucursal
     final disponibles = (_sucursalId == null)
         ? <Producto>[]
         : invProv.inventario
@@ -286,9 +288,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                       labelText: 'Disponibles',
                       border: OutlineInputBorder(),
                     ),
-                    /*    initialValue: _stockDisponible != null
-                        ? _stockDisponible.toString()
-                        : '0',*/
                     readOnly: true,
                     enabled: false,
                   ),
@@ -302,9 +301,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                       labelText: 'Precio',
                       border: OutlineInputBorder(),
                     ),
-                    /*    initialValue: _precioVenta != null
-                        ? _precioVenta!.toStringAsFixed(2)
-                        : '0.00',*/
                     readOnly: true,
                     enabled: false,
                   ),
@@ -360,7 +356,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              // onPressed: _showPaymentScreen,
               onPressed: () async {
                 final m = await seleccionarMetodoPago(context, _total);
                 if (m != null) setState(() => _metodoPago = m);
@@ -371,18 +366,36 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                    child: ElevatedButton.icon(
-                  onPressed: _guardarVenta,
-                  icon: const Icon(Icons.save),
-                  label: const Text(FlowstockConstants.titleSave,
-                      style: FlowstockTextStyles.buttonAction),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  child: ElevatedButton(
+                    onPressed: _isProcessing ? null : _guardarVenta,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
+                    child: _isProcessing
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              //    color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.save),
+                              SizedBox(width: 8),
+                              Text(
+                                FlowstockConstants.titleSave,
+                                style: FlowstockTextStyles.buttonAction,
+                              ),
+                            ],
+                          ),
                   ),
-                )),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                     child: ElevatedButton.icon(

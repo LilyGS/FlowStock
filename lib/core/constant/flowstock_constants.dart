@@ -31,7 +31,7 @@ class FlowstockConstants {
   static const String titleInventario = "Inventario";
   static const String titleCliente = "Clientes";
   static const String titleVenta = "Ventas";
-  static const String titlePago = "Forma de pago";
+  static const String titleDetVenta = "Detalle de la venta";
   static const String titleReporte = "Reportes";
   static const String titleReporteInv = "Reporte de Inventario";
   static const String titleReporteVta = "Reporte de Ventas";

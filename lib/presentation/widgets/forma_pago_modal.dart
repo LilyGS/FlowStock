@@ -1,6 +1,8 @@
+import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 import 'package:flutter/material.dart';
 
-Future<String?> seleccionarMetodoPago(BuildContext context, double total) async {
+Future<String?> seleccionarMetodoPago(
+    BuildContext context, double total) async {
   return showDialog<String>(
     context: context,
     builder: (context) {
@@ -13,13 +15,13 @@ Future<String?> seleccionarMetodoPago(BuildContext context, double total) async 
             children: [
               const Text(
                 'Selecciona forma de pago',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: FlowstockTextStyles.title2,
               ),
               const SizedBox(height: 10),
               Text.rich(
                 TextSpan(
                   text: 'Total a pagar: ',
-                  style: const TextStyle(fontSize: 16),
+                  style: FlowstockTextStyles.titleOptions,
                   children: [
                     TextSpan(
                       text: '\$${total.toStringAsFixed(2)}',
@@ -37,6 +39,13 @@ Future<String?> seleccionarMetodoPago(BuildContext context, double total) async 
                 icon: Icons.attach_money,
                 label: 'Efectivo',
                 metodo: 'Efectivo',
+              ),
+              const Divider(),
+              _opcionPago(
+                context,
+                icon: Icons.paypal,
+                label: 'Pay Pal',
+                metodo: 'Pay Pal',
               ),
               const Divider(),
               _opcionPago(
@@ -60,7 +69,8 @@ Future<String?> seleccionarMetodoPago(BuildContext context, double total) async 
   );
 }
 
-Widget _opcionPago(BuildContext context, {required IconData icon, required String label, required String metodo}) {
+Widget _opcionPago(BuildContext context,
+    {required IconData icon, required String label, required String metodo}) {
   return ListTile(
     leading: Icon(icon, color: Colors.blueAccent),
     title: Text(label),
