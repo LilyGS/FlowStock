@@ -4,6 +4,7 @@ import 'package:flow_stock/data/models/cliente.dart';
 class ClienteFacade {
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
+  // Obtener la lista de métodos de pago que están activos en el sistema
   Future<void> insertarCliente(Cliente cliente) async {
     await _databaseHelper.insert('cliente', cliente.toMap());
   }

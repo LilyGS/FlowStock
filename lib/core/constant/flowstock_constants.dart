@@ -12,7 +12,7 @@ class FlowstockConstants {
       "Error en la base de datos.  Contacta al soporte técnico";
 
   // Títulos de pantalla
-  static const String titleHome = "Flow Stock";
+  static const String titleHome = "ERP Flow Stock";
   static const String titleUsuario = "Usuarios";
   static const String titleSucursal = "Sucursales";
   static const String titleProducto = "Productos";

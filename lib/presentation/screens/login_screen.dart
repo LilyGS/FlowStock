@@ -93,7 +93,7 @@ Para poner en la documentación de donde obtuve el icono
           ),
           SizedBox(height: 20),
           Text(
-            'Flow Stock', 
+            'ERP Flow Stock', 
             style: TextStyle(
               fontSize: 24, 
               color: Colors.white, 

@@ -2,29 +2,44 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
-  static final DatabaseHelper instance = DatabaseHelper._();
+  
   static Database? _database;
 
+  // Instancia única de DatabaseHelper (patrón Singleton)
+  static final DatabaseHelper instance = DatabaseHelper._();
+
+  // Constructor privado 'nombrado' -> ._
+  // para implementar singleton
   DatabaseHelper._();
 
+  // Si la base de datos (_database) ya está abierta, la devuelve.
+  // Si no está abierta, inicializa la base de datos llamando a _initDB
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('flowstock_erp_master.db');
     return _database!;
   }
+  
 
+  // Este método obtiene la ruta del almacenamiento de bases de datos en el dispositivo:
+  //Combina la ruta con el nombre del archivo (flowstock_erp_master.db).
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
+    // Abre o crea el archivo de base de datos usando:
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
+
+  // Si la base de datos ya existe, la abre.
+  // Si no existe, ejecuta el método onCreate, es decir, llama a _createDB().
   Future<void> _createDB(Database db, int version) async {
    
     // Para activar las llaves foraneas
     await db.execute('PRAGMA foreign_keys = ON');
 
+    // Ejecuta todos los comandos CREATE TABLE para construir la estructura inicial
     await db.execute('''
       CREATE TABLE usuario (
         id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,

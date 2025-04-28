@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         title: Text(
-          'FLOW STOCK',
+          'ERP FLOW STOCK',
           style: FlowstockTextStyles.titleAppBar,
         ),
         centerTitle: true,

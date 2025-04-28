@@ -33,7 +33,7 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VentaDetalleProvider()),
       ],
       child: MaterialApp(
-          title: 'Flow Stock',
+          title: 'ERP Flow Stock',
           theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
                   seedColor: Colors.blue, brightness: Brightness.light),
