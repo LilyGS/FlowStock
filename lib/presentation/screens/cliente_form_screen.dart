@@ -5,6 +5,9 @@ import 'package:flow_stock/providers/cliente_provider.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 
+// Pantalla para registrar un nuevo Cliente
+// Contiene un formulario con campos de nombre, correo, dirección y teléfono
+
 class ClienteFormScreen extends StatefulWidget {
   final Cliente? cliente;
   const ClienteFormScreen({super.key, this.cliente});
@@ -29,6 +32,7 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
     cliente = widget.cliente;
 
     if (cliente != null) {
+      // Cuando es modificación asigna los valores al controlador
       _nombreController.text = cliente!.nombre;
       _correoController.text = cliente!.correo;
       _direccionController.text = cliente!.direccion ?? '';
@@ -38,6 +42,7 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de los controladores de texto
     _nombreController.dispose();
     _correoController.dispose();
     _direccionController.dispose();
@@ -45,6 +50,7 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
     super.dispose();
   }
 
+  // Guarda el cliente en la BD
   Future<void> _guardarCliente() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -65,9 +71,9 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
     final provider = Provider.of<ClienteProvider>(context, listen: false);
 
     if (widget.cliente == null) {
-      await provider.agregarCliente(nuevoCliente);
+      await provider.agregarCliente(nuevoCliente); // Inserción
     } else {
-      await provider.actualizarCliente(nuevoCliente);
+      await provider.actualizarCliente(nuevoCliente); // Modificación
     }
 
     if (!mounted) return;
@@ -135,34 +141,36 @@ class _ClienteFormScreenState extends State<ClienteFormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: _guardarCliente,
-                    icon: const Icon(Icons.save),
-                    label: const Text(FlowstockConstants.titleSave,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: _guardarCliente,
+                      icon: const Icon(Icons.save),
+                      label: const Text(FlowstockConstants.titleSave,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.cancel),
-                    label: const Text(FlowstockConstants.titleCancel,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text(FlowstockConstants.titleCancel,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],

@@ -15,6 +15,9 @@ import 'package:flow_stock/providers/venta_provider.dart';
 import 'package:flow_stock/presentation/widgets/forma_pago_modal.dart';
 import 'package:flow_stock/presentation/widgets/detalle_venta_table.dart';
 
+// Pantalla para registrar una nueva Venta
+// Contiene un formulario con campos de sucursal, cliente, producto, cantidad, método de pago
+
 class VentaFormScreen extends StatefulWidget {
   const VentaFormScreen({super.key});
 
@@ -22,6 +25,8 @@ class VentaFormScreen extends StatefulWidget {
   State<VentaFormScreen> createState() => _VentaFormScreenState();
 }
 
+// Estado de la pantalla de registro de ventas.
+// Administra el formulario, selección de productos y detalles de la venta.
 class _VentaFormScreenState extends State<VentaFormScreen> {
   final _precioController = TextEditingController(text: '0.00');
   final _stockController = TextEditingController(text: '0');
@@ -44,6 +49,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
   void initState() {
     super.initState();
 
+    // Carga inicial de la primera sucursal disponible y su inventario.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final sucursales =
           Provider.of<SucursalProvider>(context, listen: false).sucursales;
@@ -59,12 +65,15 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de controladores de texto para evitar fugas de memoria.
     _precioController.dispose();
     _stockController.dispose();
     _cantidadController.dispose();
     super.dispose();
   }
 
+  // Agrega un producto al detalle de la venta.
+  // Verifica disponibilidad de stock antes de agregar.
   Future<void> _agregarDetalle() async {
     if (_productoSel == null) return;
     // obtener inventario para precio
@@ -108,12 +117,14 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
     });
   }
 
+  // Guarda la venta en la base de datos y actualiza el inventario.
   Future<void> _guardarVenta() async {
     if (_sucursalId == null || _detalles.isEmpty || _metodoPago == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text(
-                'Por favor completa los campos requeridos (Sucursal, Método pago o Detalles de la venta)')),
+          content: Text(
+              'Por favor completa los campos requeridos (Sucursal, Método pago o Detalles de la venta)'),
+        ),
       );
       return;
     }
@@ -144,9 +155,10 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
         final inventarioActualizado = inventario.copyWith(
           cantidadDisponible: inventario.cantidadDisponible - detalle.cantidad,
         );
-
+        // Actualiza el stock
         await invProv.actualizarInventario(inventarioActualizado);
       }
+      //Simula el proceso del pago
       await Future.delayed(const Duration(seconds: 5));
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,6 +169,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
       );
       Navigator.pop(context, true);
     } catch (ex) {
+      // Si algo sale mal manda el mensaje que esta en constantes
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(FlowstockConstants.errorGeneral),
         backgroundColor: Colors.red,
@@ -177,6 +190,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
     final prodProv = Provider.of<ProductoProvider>(context);
     final invProv = Provider.of<InventarioProvider>(context);
 
+    // Obtener productos disponibles en inventario según sucursal seleccionada
     final disponibles = (_sucursalId == null)
         ? <Producto>[]
         : invProv.inventario
@@ -187,7 +201,10 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
             .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text(FlowstockConstants.titleNewVenta)),
+      appBar: AppBar(
+        title:
+            const Text(FlowstockConstants.titleNewVenta), // Uso de constantes
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: ListView(
@@ -201,7 +218,8 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                         child: Text(s.nombre),
                       ))
                   .toList(),
-              onChanged: _detalles.isEmpty
+              onChanged: _detalles
+                      .isEmpty // Al cambiar la sucursal busca el inventario para esa sucursal
                   ? (value) async {
                       if (value == null) return;
                       await Provider.of<InventarioProvider>(context,
@@ -334,6 +352,7 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
               ],
             ),
             const Divider(height: 24),
+            // widget - Tabla para mostrar productos agregados a la venta
             DetalleVentaTable(
               detalles: _detalles,
               productos: prodProv.productos,
@@ -377,7 +396,6 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
-                              //    color: Colors.white,
                               strokeWidth: 2,
                             ),
                           )
@@ -396,20 +414,21 @@ class _VentaFormScreenState extends State<VentaFormScreen> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                    child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.cancel),
-                  label: const Text(FlowstockConstants.titleCancel,
-                      style: FlowstockTextStyles.buttonAction),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.cancel),
+                    label: const Text(FlowstockConstants.titleCancel,
+                        style: FlowstockTextStyles.buttonAction),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
-                )),
+                ),
               ],
             ),
           ],

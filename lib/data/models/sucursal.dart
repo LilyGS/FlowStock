@@ -1,10 +1,12 @@
 class Sucursal {
+  // Modelo que representa una Sucursal
   final int? idSucursal;
   final String nombre;
   final String ubicacion;
   final String? telefono;
   final String status;
 
+  // Constructor de la clase
   Sucursal(
       {this.idSucursal,
       required this.nombre,
@@ -12,6 +14,7 @@ class Sucursal {
       this.telefono,
       required this.status});
 
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_sucursal': idSucursal,
@@ -22,6 +25,7 @@ class Sucursal {
     };
   }
 
+  // Crea una instancia de Sucursal a partir de un mapa
   factory Sucursal.fromMap(Map<String, dynamic> map) {
     return Sucursal(
       idSucursal: map['id_sucursal'],
@@ -32,20 +36,7 @@ class Sucursal {
     );
   }
 
-  Sucursal copyWith(
-      {int? idSucursal,
-      String? nombre,
-      String? ubicacion,
-      String? telefono,
-      String? status}) {
-    return Sucursal(
-        idSucursal: idSucursal ?? this.idSucursal,
-        nombre: nombre ?? this.nombre,
-        ubicacion: ubicacion ?? this.ubicacion,
-        telefono: telefono ?? this.telefono,
-        status: status ?? this.status);
-  }
-
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Sucursal{idSucursal: $idSucursal, nombre: $nombre, ubicacion: $ubicacion, telefono: $telefono, status: $status}';

@@ -1,4 +1,6 @@
 class Inventario {
+  // Modelo que representa un Inventario
+
   final int idSucursal;
   final int idProducto;
   final int cantidadDisponible;
@@ -7,6 +9,7 @@ class Inventario {
   final DateTime fechaIngreso;
 
    
+  // Constructor de la clase
   Inventario({
     required this.idSucursal,
     required this.idProducto,
@@ -16,6 +19,7 @@ class Inventario {
     required this.fechaIngreso,
   });
 
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_sucursal': idSucursal,
@@ -27,6 +31,7 @@ class Inventario {
     };
   }
 
+  // Crea una instancia de Inventario a partir de un mapa
   factory Inventario.fromMap(Map<String, dynamic> map) {
     return Inventario(
       idSucursal: map['id_sucursal'],
@@ -38,6 +43,7 @@ class Inventario {
     );
   }
 
+  // Crea una copia del Inventario actual con la posibilidad de cambiar algunos campos
   Inventario copyWith(
       {int? idSucursal,
       int? idProducto,
@@ -54,6 +60,7 @@ class Inventario {
         fechaIngreso: fechaIngreso ?? this.fechaIngreso);
   }
 
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Inventario{idSucursal: $idSucursal, idProducto: $idProducto, cantidadDisponible: $cantidadDisponible, precioCompra: $precioCompra, precioVenta: $precioVenta, fechaIngreso: $fechaIngreso}';

@@ -1,4 +1,5 @@
 class Cliente {
+  // Modelo que representa un Cliente
   final int? idCliente;
   final String nombre;
   final String correo;
@@ -6,6 +7,7 @@ class Cliente {
   final String? telefono;
   final String status;
 
+  // Constructor de la clase
   Cliente(
       {this.idCliente,
       required this.nombre,
@@ -14,6 +16,7 @@ class Cliente {
       this.telefono,
       required this.status});
 
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_cliente': idCliente,
@@ -25,6 +28,7 @@ class Cliente {
     };
   }
 
+  // Crea una instancia de Cliente a partir de un mapa
   factory Cliente.fromMap(Map<String, dynamic> map) {
     return Cliente(
       idCliente: map['id_cliente'],
@@ -36,22 +40,7 @@ class Cliente {
     );
   }
 
-  Cliente copyWith(
-      {int? idCliente,
-      String? nombre,
-      String? correo,
-      String? direccion,
-      String? telefono,
-      String? status}) {
-    return Cliente(
-        idCliente: idCliente ?? this.idCliente,
-        nombre: nombre ?? this.nombre,
-        correo: correo ?? this.correo,
-        direccion: direccion ?? this.direccion,
-        telefono: telefono ?? this.telefono,
-        status: status ?? this.status);
-  }
-
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Cliente{idCliente: $idCliente, nombre: $nombre, correo: $correo, direccion: $direccion, telefono: $telefono,  status: $status}';

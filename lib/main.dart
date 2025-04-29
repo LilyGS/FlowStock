@@ -24,6 +24,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        // Para gestionar varios providers al mismo tiempo
         ChangeNotifierProvider(create: (_) => UsuarioProvider()),
         ChangeNotifierProvider(create: (_) => SucursalProvider()),
         ChangeNotifierProvider(create: (_) => ClienteProvider()),
@@ -33,16 +34,18 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VentaDetalleProvider()),
       ],
       child: MaterialApp(
-          title: 'ERP Flow Stock',
-          theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.blue, brightness: Brightness.light),
-              useMaterial3: true,
-              appBarTheme: AppBarTheme(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  elevation: 0)),
-          home: LoginScreen()),
+        title: 'ERP Flow Stock',
+        theme: ThemeData(
+            // Configuración del tema de la aplicación
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.blue, brightness: Brightness.light),
+            useMaterial3: true,
+            appBarTheme: AppBarTheme(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                elevation: 0)),
+        home: LoginScreen(),   // Empieza ejecutando el Login
+      ),
     );
   }
 }

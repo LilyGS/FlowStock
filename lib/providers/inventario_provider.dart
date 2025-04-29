@@ -3,6 +3,7 @@ import 'package:flow_stock/data/models/inventario.dart';
 import 'package:flow_stock/pattern/facade/inventario_facade.dart';
 
 class InventarioProvider with ChangeNotifier {
+  // Instancia del InventarioFacade para interactuar con la base de datos
   final InventarioFacade _facade = InventarioFacade();
 
   List<Inventario> _inventario = [];
@@ -10,7 +11,8 @@ class InventarioProvider with ChangeNotifier {
 
   bool isLoading = false;
 
-
+  // Carga todos los inventarios.
+  // Mientras se carga, actualiza isLoading y notifica a todos los listeners.
   Future<void> cargarInventario() async {
     isLoading = true;
     notifyListeners();
@@ -25,6 +27,7 @@ class InventarioProvider with ChangeNotifier {
     }
   }
 
+  // Carga el inventario de la sucursal seleccionada
   Future<void> cargarInventarioPorSucursal({int? idSucursal}) async {
     isLoading = true;
     notifyListeners();
@@ -36,32 +39,17 @@ class InventarioProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Agrega un nuevo inventario y recarga la lista de inventarios
   Future<void> agregarInventario(Inventario inventario) async {
     await _facade.insertarInventario(inventario);
     await cargarInventario();
     await cargarInventarioPorSucursal(idSucursal: inventario.idSucursal);
   }
 
+  // Actualiza un inventario y recarga la lista de inventarios
   Future<void> actualizarInventario(Inventario inventario) async {
     await _facade.actualizarInventario(inventario);
     await cargarInventario();
     await cargarInventarioPorSucursal(idSucursal: inventario.idSucursal);
-  }
-
-  Inventario? buscarInventario(int idSucursal, int idProducto) {
-    return _inventario.firstWhere(
-      (inv) => inv.idSucursal == idSucursal && inv.idProducto == idProducto,
-      /* orElse: () => null,*/
-    );
-  }
-
-  Future<void> consultarInventario({int? idSucursal}) async {
-    _inventario = await _facade.consultarInventario(idSucursal: idSucursal);
-    notifyListeners();
-  }
-
-  void limpiarInventario() {
-    _inventario = [];
-    notifyListeners();
   }
 }

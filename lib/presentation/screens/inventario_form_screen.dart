@@ -9,6 +9,10 @@ import 'package:flow_stock/data/models/inventario.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 
+// Pantalla para registrar un nuevo Inventario
+// Contiene un formulario con campos de sucursal, producto,
+// cantidad disponible, precio de compra y precio de venta
+
 class InventarioFormScreen extends StatefulWidget {
   final Inventario? inventario;
   const InventarioFormScreen({super.key, this.inventario});
@@ -36,6 +40,7 @@ class _InventarioFormScreenState extends State<InventarioFormScreen> {
     super.initState();
 
     if (widget.inventario != null) {
+      // Cuando es modificación asigna los valores al controlador
       final inv = widget.inventario!;
       idSucursal = inv.idSucursal;
       idProducto = inv.idProducto;
@@ -51,6 +56,7 @@ class _InventarioFormScreenState extends State<InventarioFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de los controladores de texto
     _cantidadController.dispose();
     _precioCompraController.dispose();
     _precioVentaController.dispose();
@@ -58,6 +64,7 @@ class _InventarioFormScreenState extends State<InventarioFormScreen> {
     super.dispose();
   }
 
+  // Guarda el inventario en la BD
   void _guardarInventario() async {
     if (_formKey.currentState!.validate() &&
         idSucursal != null &&
@@ -74,9 +81,9 @@ class _InventarioFormScreenState extends State<InventarioFormScreen> {
       final provider = Provider.of<InventarioProvider>(context, listen: false);
 
       if (widget.inventario == null) {
-        await provider.agregarInventario(nuevo);
+        await provider.agregarInventario(nuevo); // Inserción
       } else {
-        await provider.actualizarInventario(nuevo);
+        await provider.actualizarInventario(nuevo); // Modificación
       }
 
       if (!mounted) return;
@@ -241,34 +248,36 @@ class _InventarioFormScreenState extends State<InventarioFormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: _guardarInventario,
-                    icon: const Icon(Icons.save),
-                    label: const Text(FlowstockConstants.titleSave,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: _guardarInventario,
+                      icon: const Icon(Icons.save),
+                      label: const Text(FlowstockConstants.titleSave,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.cancel),
-                    label: const Text(FlowstockConstants.titleCancel,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text(FlowstockConstants.titleCancel,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],

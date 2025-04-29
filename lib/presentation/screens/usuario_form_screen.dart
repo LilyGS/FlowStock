@@ -5,6 +5,9 @@ import 'package:flow_stock/providers/usuario_provider.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 
+// Pantalla para registrar un nuevo Usuario
+// Contiene un formulario con campos de nombre, correo, contraseña y rol
+
 class UsuarioFormScreen extends StatefulWidget {
   final Usuario? usuario;
   const UsuarioFormScreen({super.key, this.usuario});
@@ -29,6 +32,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
     usuario = widget.usuario;
 
     if (usuario != null) {
+      // Cuando es modificación asigna los valores al controlador
       _nombreController.text = usuario!.nombre;
       _correoController.text = usuario!.correo;
       _contrasenaController.text = usuario!.contrasena;
@@ -38,6 +42,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de controladores de texto
     _nombreController.dispose();
     _correoController.dispose();
     _contrasenaController.dispose();
@@ -45,6 +50,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
     super.dispose();
   }
 
+  // Guaarda el usuario en la BD
   Future<void> _guardarUsuario() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -65,9 +71,9 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
     final provider = Provider.of<UsuarioProvider>(context, listen: false);
 
     if (widget.usuario == null) {
-      await provider.agregarUsuario(nuevoUsuario);
+      await provider.agregarUsuario(nuevoUsuario); // En la inserción
     } else {
-      await provider.actualizarUsuario(nuevoUsuario);
+      await provider.actualizarUsuario(nuevoUsuario); // Cuando es modificación
     }
 
     if (!mounted) return;
@@ -80,7 +86,7 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
       appBar: AppBar(
         title: Text(widget.usuario == null
             ? FlowstockConstants.titleNewUsuario
-            : FlowstockConstants.titleEditUsuario),
+            : FlowstockConstants.titleEditUsuario), // uso de constantes
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -122,7 +128,8 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
               TextFormField(
                 controller: _rolController,
                 decoration: const InputDecoration(
-                    labelText: 'Rol (admin, vendedor)', border: OutlineInputBorder()),
+                    labelText: 'Rol (admin, vendedor)',
+                    border: OutlineInputBorder()),
                 validator: (value) =>
                     value!.isEmpty ? 'Campo obligatorio' : null,
               ),
@@ -131,34 +138,36 @@ class _UsuarioFormScreenState extends State<UsuarioFormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: _guardarUsuario,
-                    icon: const Icon(Icons.save),
-                    label: const Text(FlowstockConstants.titleSave,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: _guardarUsuario,
+                      icon: const Icon(Icons.save),
+                      label: const Text(FlowstockConstants.titleSave,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.cancel),
-                    label: const Text(FlowstockConstants.titleCancel,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text(FlowstockConstants.titleCancel,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],

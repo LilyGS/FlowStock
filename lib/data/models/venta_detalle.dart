@@ -1,4 +1,5 @@
 class VentaDetalle {
+  // Modelo que representa un Detalle de la Venta
   final int? idDetalle;
   final int idVenta;
   final int idProducto;
@@ -6,6 +7,7 @@ class VentaDetalle {
   final double precioUnitario;
   final double subtotal;
 
+  // Constructor de la clase
   VentaDetalle(
       {required this.idDetalle,
       required this.idVenta,
@@ -14,6 +16,7 @@ class VentaDetalle {
       required this.precioUnitario,
       required this.subtotal});
 
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_detalle': idDetalle,
@@ -25,6 +28,7 @@ class VentaDetalle {
     };
   }
 
+  // Crea una instancia de VentaDetalle a partir de un mapa
   factory VentaDetalle.fromMap(Map<String, dynamic> map) {
     return VentaDetalle(
       idDetalle: map['id_detalle'],
@@ -36,6 +40,7 @@ class VentaDetalle {
     );
   }
 
+  // Crea una copia de VentaDetalle actual con la posibilidad de cambiar algunos campos
   VentaDetalle copyWith({int? idVenta}) {
     return VentaDetalle(
       idDetalle: idDetalle,
@@ -47,6 +52,7 @@ class VentaDetalle {
     );
   }
 
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'VentaDetalle{idDetalle: $idDetalle, idVenta: $idVenta, idProducto: $idProducto, cantidad: $cantidad, precioUnitario: $precioUnitario, subtotal: $subtotal}';

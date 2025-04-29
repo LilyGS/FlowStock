@@ -1,4 +1,6 @@
 class FlowstockConstants {
+  // Clase para configurar los títulos y mensajes
+  // utilizados en la aplicación
 
   // Configuración de Moneda
   static const String currencySymbol = '\$';

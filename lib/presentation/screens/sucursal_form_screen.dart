@@ -5,6 +5,9 @@ import 'package:flow_stock/providers/sucursal_provider.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 
+// Pantalla para registrar una nueva sucursal
+// Contiene un formulario con campos de nombre, ubicación y teléfono
+
 class SucursalFormScreen extends StatefulWidget {
   final Sucursal? sucursal;
   const SucursalFormScreen({super.key, this.sucursal});
@@ -28,6 +31,7 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
     sucursal = widget.sucursal;
 
     if (sucursal != null) {
+      // Cuando es modificación asigna los valores al controlador
       _nombreController.text = sucursal!.nombre;
       _ubicacionController.text = sucursal!.ubicacion;
       _telefonoController.text = sucursal!.telefono ?? '';
@@ -36,12 +40,14 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de controladores de texto
     _nombreController.dispose();
     _ubicacionController.dispose();
     _telefonoController.dispose();
     super.dispose();
   }
 
+  // Guarda la Sucursal en la BD
   Future<void> _guardarSucursal() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -60,9 +66,9 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
     final provider = Provider.of<SucursalProvider>(context, listen: false);
 
     if (widget.sucursal == null) {
-      await provider.agregarSucursal(nuevaSucursal);
+      await provider.agregarSucursal(nuevaSucursal); // Inserción
     } else {
-      await provider.actualizarSucursal(nuevaSucursal);
+      await provider.actualizarSucursal(nuevaSucursal); // Modificación
     }
 
     if (!mounted) return;
@@ -75,7 +81,7 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
       appBar: AppBar(
         title: Text(widget.sucursal == null
             ? FlowstockConstants.titleNewSucursal
-            : FlowstockConstants.titleEditSucursal),
+            : FlowstockConstants.titleEditSucursal), // Uso de constantes
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -135,20 +141,21 @@ class _SucursalFormScreenState extends State<SucursalFormScreen> {
                   )),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.cancel),
-                    label: const Text(FlowstockConstants.titleCancel,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text(FlowstockConstants.titleCancel,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],

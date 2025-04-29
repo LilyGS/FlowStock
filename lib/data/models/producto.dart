@@ -1,4 +1,5 @@
 class Producto {
+  // Modelo que representa un Producto
   final int? idProducto;
   final String nombre;
   final String? descripcion;
@@ -7,6 +8,7 @@ class Producto {
   final double precioLista;
   final String status;
 
+ // Constructor de la clase
   Producto({
     this.idProducto,
     required this.nombre,
@@ -17,6 +19,7 @@ class Producto {
     required this.status,
   });
 
+  // Crea una instancia de Producto a partir de un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_producto': idProducto,
@@ -29,6 +32,7 @@ class Producto {
     };
   }
 
+  // Crea una instancia de VentaDetalle a partir de un mapa
   factory Producto.fromMap(Map<String, dynamic> map) {
     return Producto(
       idProducto: map['id_producto'],
@@ -41,24 +45,7 @@ class Producto {
     );
   }
 
-  Producto copyWith(
-      {int? idProducto,
-      String? nombre,
-      String? descripcion,
-      String? categoria,
-      String? unidadMedida,
-      double? precioLista,
-      String? status}) {
-    return Producto(
-        idProducto: idProducto ?? this.idProducto,
-        nombre: nombre ?? this.nombre,
-        descripcion: descripcion ?? this.descripcion,
-        categoria: categoria ?? this.categoria,
-        unidadMedida: unidadMedida ?? this.unidadMedida,
-        precioLista: precioLista ?? this.precioLista,
-        status: status ?? this.status);
-  }
-
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Producto{idProducto: $idProducto, nombre: $nombre, descripcion: $descripcion, categoria: $categoria, unidadMedida: $unidadMedida, precioLista: $precioLista, status: $status}';

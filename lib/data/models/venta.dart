@@ -1,4 +1,5 @@
 class Venta {
+  // Modelo que representa una Venta
   final int? idVenta;
   final DateTime fechaVenta;
   final int idSucursal;
@@ -6,17 +7,18 @@ class Venta {
   final String metodoPago;
   final double total;
   final String status;
+  
+  // Constructor de la clase
+  Venta(
+      {this.idVenta,
+      required this.fechaVenta,
+      required this.idSucursal,
+      this.idCliente,
+      required this.metodoPago,
+      required this.total,
+      required this.status});
 
-  Venta({
-    this.idVenta,
-    required this.fechaVenta,
-    required this.idSucursal,
-    this.idCliente,
-    required this.metodoPago,
-    required this.total,
-    required this.status
-  });
-
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_venta': idVenta,
@@ -29,10 +31,11 @@ class Venta {
     };
   }
 
+  // Crea una instancia de Venta a partir de un mapa
   factory Venta.fromMap(Map<String, dynamic> map) {
     return Venta(
       idVenta: map['id_venta'],
-      fechaVenta: DateTime.parse(map['fecha_venta']),  
+      fechaVenta: DateTime.parse(map['fecha_venta']),
       idSucursal: map['id_sucursal'],
       idCliente: map['id_cliente'],
       metodoPago: map['metodo_pago'],
@@ -41,25 +44,7 @@ class Venta {
     );
   }
 
-  Venta copyWith(
-      {int? idVenta,
-      DateTime? fechaVenta,
-      int? idSucursal,
-      int? idCliente,
-      String? metodoPago,
-      double? total,
-      String? status
-      }) {
-    return Venta(
-        idVenta: idVenta ?? this.idVenta,
-        fechaVenta: fechaVenta ?? this.fechaVenta,
-        idSucursal: idSucursal ?? this.idSucursal,
-        idCliente: idCliente ?? this.idCliente,
-        metodoPago: metodoPago ?? this.metodoPago,
-        total: total ?? this.total,
-        status: status ?? this.status);
-  }
-
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Venta{idVenta: $idVenta, fechaVenta: $fechaVenta, idSucursal: $idSucursal, idCliente: $idCliente, metodoPago: $metodoPago, total: $total, status: $status}';

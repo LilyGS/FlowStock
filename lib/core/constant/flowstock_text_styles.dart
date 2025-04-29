@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class FlowstockTextStyles {
+  // Clase para configurar el formato de los títulos,
+  // mensajes o botones
+
   static const TextStyle title = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.bold,

@@ -1,4 +1,6 @@
 class Usuario {
+  // Modelo que representa un Usuario
+  
   final int? idUsuario;
   final String nombre;
   final String correo;
@@ -6,6 +8,7 @@ class Usuario {
   final String rol;
   final String status;
 
+  // Constructor de la clase
   Usuario({
     this.idUsuario,
     required this.nombre,
@@ -15,6 +18,7 @@ class Usuario {
     required this.status,
   });
 
+  // Convierte el objeto a un mapa
   Map<String, dynamic> toMap() {
     return {
       'id_usuario': idUsuario,
@@ -26,6 +30,7 @@ class Usuario {
     };
   }
 
+  // Crea una instancia de Usuario a partir de un mapa
   factory Usuario.fromMap(Map<String, dynamic> map) {
     return Usuario(
       idUsuario: map['id_usuario'],
@@ -37,23 +42,7 @@ class Usuario {
     );
   }
 
-  Usuario copyWith({
-    int? idUsuario,
-    String? nombre,
-    String? correo,
-    String? contrasena,
-    String? rol,
-    String? status,
-  }) {
-    return Usuario(
-        idUsuario: idUsuario ?? this.idUsuario,
-        nombre: nombre ?? this.nombre,
-        correo: correo ?? this.correo,
-        contrasena: contrasena ?? this.contrasena,
-        rol: rol ?? this.rol,
-        status: status ?? this.status);
-  }
-
+  // Retorna una representación en texto del objeto
   @override
   String toString() {
     return 'Usuario{id: $idUsuario, nombre: $nombre, correo: $correo, contrasena: $contrasena, rol: $rol, status: $status,}';

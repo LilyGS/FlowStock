@@ -6,20 +6,16 @@ import 'package:flow_stock/providers/producto_provider.dart';
 import 'package:flow_stock/core/constant/flowstock_constants.dart';
 import 'package:flow_stock/core/constant/flowstock_text_styles.dart';
 
+// Pantalla para registrar un nuevo Producto
+// Contiene un formulario con campos de nombre,
+// descripción, categoría, unidad y precio de lista
+
 class ProductoFormScreen extends StatefulWidget {
   final Producto? producto;
   const ProductoFormScreen({super.key, this.producto});
 
   @override
   State<ProductoFormScreen> createState() => _ProductoFormScreenState();
-}
-
-class UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    return newValue.copyWith(text: newValue.text.toUpperCase());
-  }
 }
 
 class _ProductoFormScreenState extends State<ProductoFormScreen> {
@@ -39,6 +35,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
     producto = widget.producto;
 
     if (producto != null) {
+      // Cuando es modificación asigna los valores al controlador
       _nombreController.text = producto!.nombre;
       _descripcionController.text = producto!.descripcion ?? '';
       _categoriaController.text = producto!.categoria ?? '';
@@ -49,6 +46,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
 
   @override
   void dispose() {
+    // Liberación de controladores de texto
     _nombreController.dispose();
     _descripcionController.dispose();
     _categoriaController.dispose();
@@ -57,6 +55,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
     super.dispose();
   }
 
+  // Guarda el producto en la BD
   Future<void> _guardarProducto() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -80,9 +79,9 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
     final provider = Provider.of<ProductoProvider>(context, listen: false);
 
     if (widget.producto == null) {
-      await provider.agregarProducto(nuevoProducto);
+      await provider.agregarProducto(nuevoProducto); // Inserción
     } else {
-      await provider.actualizarProducto(nuevoProducto);
+      await provider.actualizarProducto(nuevoProducto); // Modificación
     }
 
     if (!mounted) return;
@@ -95,7 +94,7 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
       appBar: AppBar(
         title: Text(widget.producto == null
             ? FlowstockConstants.titleNewProducto
-            : FlowstockConstants.titleEditProducto),
+            : FlowstockConstants.titleEditProducto), // Uso de constantes
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -172,34 +171,36 @@ class _ProductoFormScreenState extends State<ProductoFormScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: _guardarProducto,
-                    icon: const Icon(Icons.save),
-                    label: const Text(FlowstockConstants.titleSave,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: _guardarProducto,
+                      icon: const Icon(Icons.save),
+                      label: const Text(FlowstockConstants.titleSave,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.cancel),
-                    label: const Text(FlowstockConstants.titleCancel,
-                        style: FlowstockTextStyles.buttonAction),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.cancel),
+                      label: const Text(FlowstockConstants.titleCancel,
+                          style: FlowstockTextStyles.buttonAction),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],
