@@ -27,6 +27,9 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
   }
 
   Future<void> _cargarTodo() async {
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga el inventario, productos y sucursal desde el provider
     final context = this.context;
     await Provider.of<InventarioProvider>(context, listen: false)
         .cargarInventarioPorSucursal(idSucursal: _sucursalSeleccionada);
@@ -36,6 +39,7 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
         .cargarSucursales();
   }
 
+  // Método para editar el inventario
   Future<void> _editarInventario(Inventario inventario) async {
     final result = await Navigator.push(
       context,
@@ -51,6 +55,7 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
     }
   }
 
+  // Método para dar de alta el inventario
   Future<void> _showInventarioScreen() async {
     final result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => InventarioFormScreen()));
@@ -65,12 +70,14 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede a los siguientes providers
     final inventarioProvider = Provider.of<InventarioProvider>(context);
     final productoProvider = Provider.of<ProductoProvider>(context);
     final sucursalProvider = Provider.of<SucursalProvider>(context);
 
     final sucursales = sucursalProvider.sucursales;
 
+    // Filtra el inventario de acuerdo a la sucursal que seleccionó el usuario
     List<Inventario> inventarioFiltrado = _sucursalSeleccionada == null
         ? inventarioProvider.inventario
         : inventarioProvider.inventario
@@ -111,6 +118,8 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
               },
             ),
           ),
+
+          // muestra una lista de inventario o un indicador de carga
           Expanded(
             child: inventarioProvider.isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -118,6 +127,8 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
                     itemCount: inventarioFiltrado.length,
                     itemBuilder: (context, index) {
                       final item = inventarioFiltrado[index];
+
+                      // Busca el producto por el id, si no lo encuentra pone uno por default
                       final producto = productoProvider.productos.firstWhere(
                         (p) => p.idProducto == item.idProducto,
                         orElse: () => Producto(
@@ -125,6 +136,8 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
                             precioLista: 0,
                             status: 'inactivo'),
                       );
+
+                       // Busca la sucursal por el id, si no lo encuentra pone uno por default
                       final sucursal = sucursales.firstWhere(
                         (s) => s.idSucursal == item.idSucursal,
                         orElse: () => Sucursal(
@@ -136,6 +149,8 @@ class _InventarioListScreenState extends State<InventarioListScreen> {
                       final bool bajoStock =
                           item.cantidadDisponible < 5; // umbral de ejemplo
 
+                      
+                      // Card para cada item del inventario
                       return Card(
                         margin: const EdgeInsets.all(8),
                         color: bajoStock ? Colors.red.shade50 : null,

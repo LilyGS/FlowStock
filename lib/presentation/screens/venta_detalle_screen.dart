@@ -16,6 +16,7 @@ import 'package:flow_stock/providers/venta_detalle_provider.dart';
 import 'package:flow_stock/presentation/widgets/detalle_venta_table.dart';
 
 
+// Muestra el detalle de la venta solo consulta
 class VentaDetalleScreen extends StatefulWidget {
   final Venta venta;
 
@@ -35,6 +36,9 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
   }
 
   Future<void> _cargarDetalles() async {
+    // Se ejecuta cuando el widget se renderizó
+    // Carga las sucursales, clientes, ventas desde el provider
+
     await Provider.of<VentaDetalleProvider>(context, listen: false)
         .cargarDetallesPorVenta(widget.venta.idVenta!);
     setState(() {
@@ -44,6 +48,7 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de productos, ventaDetalle, cliente y sucursal
     final productoProvider = Provider.of<ProductoProvider>(context);
     final ventaDetalleProvider = Provider.of<VentaDetalleProvider>(context);
     final detalles = ventaDetalleProvider.detalles;
@@ -63,7 +68,7 @@ class _VentaDetalleScreenState extends State<VentaDetalleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(FlowstockConstants.titleDetVenta),
+        title: Text(FlowstockConstants.titleDetVenta),  // Emplea constantes
       ),
       body: _cargando
           ? const Center(child: CircularProgressIndicator())

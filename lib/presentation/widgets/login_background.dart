@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+// Widget que tiene el background de la pantalla del Login
+
 class LoginBackground extends StatelessWidget {
 
   const LoginBackground({super.key});

@@ -17,12 +17,16 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga los usuarios desde el provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<UsuarioProvider>(context, listen: false);
       provider.cargarUsuarios();
     });
   }
 
+  // Método del diálogo para eliminar usuario
   void _confirmarEliminarUsuario(int idUsuario) {
     showDialog(
       context: context,
@@ -61,6 +65,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
     );
   }
 
+  // Método para reactivar usuario
   void _activarUsuario(int idUsuario) async {
     final provider = Provider.of<UsuarioProvider>(context, listen: false);
     await provider.activarUsuario(idUsuario);
@@ -74,6 +79,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
     );
   }
 
+  // Método que llama pantalla para editar usuario
   Future<void> _editarUsuario(Usuario usuario) async {
     final result = await Navigator.push(
       context,
@@ -88,6 +94,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
     }
   }
   
+  // Método que llama pantalla para registrar nuevo usuario
   Future<void> _showUsuarioScreen() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => UsuarioFormScreen()));
@@ -100,13 +107,14 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de usuario
     final usuarioProvider = Provider.of<UsuarioProvider>(context);
     final usuarios = usuarioProvider.usuarios;
     final isLoading = usuarioProvider.isLoading;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(FlowstockConstants.titleUsuario),
+        title: const Text(FlowstockConstants.titleUsuario), // Empleo de constantes
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -119,6 +127,8 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final usuario = usuarios[index];
+
+                      // Card para cada usuario
                       return Card(
                         color: usuario.status == 'inactivo'
                             ? Colors.grey[300]
@@ -137,6 +147,7 @@ class _UsuarioListScreenState extends State<UsuarioListScreen> {
                                   style: FlowstockTextStyles.listSubTitle)
                             ],
                           ),
+                          // Al dar clic abre la pantalla para editar el usuario
                           onTap: () => _editarUsuario(usuario),
                           trailing: usuario.status == 'activo'
                               ? IconButton(

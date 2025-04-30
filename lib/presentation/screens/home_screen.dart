@@ -19,6 +19,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final isAdmin = rol == 'admin';
     final isVendedor = rol == 'vendedor';
 
@@ -39,6 +40,7 @@ class HomeScreen extends StatelessWidget {
                   Provider.of<UsuarioProvider>(context, listen: false);
               await usuarioProvider.cerrarSesion();
 
+              // Al cerrar la sesión direcciona a la pantalla de Login
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -52,6 +54,8 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+
+              // Si el usuario tiene rol de admin presenta las siguientes opciones
               if (isAdmin) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -169,6 +173,8 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ],
+
+              // Si el usuario tiene rol de vendedor solo tiene las opciones de Clientes y Ventas
               if (isVendedor) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -197,6 +203,9 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // Widget para configurar el botón de cada opción en el menú
+  // recibe el texto, ícono y color
+  
   Widget _buildNavigationButton(
     BuildContext context,
     String text,

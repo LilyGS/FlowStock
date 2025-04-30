@@ -19,8 +19,11 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     setState(() => isLoading = true);
 
+    // Accede al provider de usuario
     final usuarioProvider =
         Provider.of<UsuarioProvider>(context, listen: false);
+
+    // Busca el usuario con el correo y contraseña    
     final usuario = await usuarioProvider.login(
       _correoController.text.trim(),
       _contrasenaController.text.trim(),
@@ -29,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = false);
 
     if (usuario != null) {
+      // Si regresa un usuario ejecuta pantalla de menú pasando el rol
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -68,9 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-/*
-Para poner en la documentación de donde obtuve el icono
-<a href="https://www.flaticon.com/free-icons/product" title="product icons">Product icons created by Uniconlabs - Flaticon</a>*/
+  
+  // Widget que contienen los controladores del correo y contraseña
   Widget _buidLoginContent() {
     return Container(
       padding: EdgeInsets.all(64),

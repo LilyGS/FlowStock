@@ -13,6 +13,7 @@ class ReporteInventario extends StatefulWidget {
 }
 
 class _ReporteInventarioState extends State<ReporteInventario> {
+  // Instancia única del DatabaseHelper utilizando el patrón Singleton
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
   List<Map<String, dynamic>> _datos = [];
   int? _sucursalSeleccionada;
@@ -20,6 +21,9 @@ class _ReporteInventarioState extends State<ReporteInventario> {
   @override
   void initState() {
     super.initState();
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga las sucursales y el inventario
 
     _cargarSucursal();
     _consultarInventario();
@@ -35,6 +39,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
   Future<void> _consultarInventario() async {
     final db = await _databaseHelper.database;
 
+    // Consulta del inventario haciendo join con productos y sucursales
     final resultados = await db.rawQuery('''
       SELECT 
         p.nombre AS producto, 
@@ -56,6 +61,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de sucursal
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final sucursales = sucursalProvider.sucursales;
 
@@ -66,7 +72,9 @@ class _ReporteInventarioState extends State<ReporteInventario> {
         .length;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(FlowstockConstants.titleReporteInv)),
+      appBar: AppBar(
+          title: const Text(
+              FlowstockConstants.titleReporteInv)), // Emplea constantes
       body: Column(
         children: [
           Padding(
@@ -82,6 +90,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
                       child: Text(s.nombre),
                     )),
               ],
+              // al cambiar la sucursal se actualiza la consulta del inventario
               onChanged: (val) {
                 setState(() => _sucursalSeleccionada = val);
                 _consultarInventario();
@@ -113,6 +122,7 @@ class _ReporteInventarioState extends State<ReporteInventario> {
                       final unidad = d['unidad_medida'] ?? 'unidad(es)';
                       final esCritico = stock < stockMinimo;
 
+                      // Card para mostrar el inventario
                       return Card(
                         color: esCritico ? Colors.red.shade50 : null,
                         child: ListTile(

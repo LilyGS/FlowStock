@@ -33,6 +33,10 @@ class _VentaListScreenState extends State<VentaListScreen> {
   }
 
   Future<void> _cargarTodo() async {
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga las sucursales, clientes, ventas desde el provider
+
     final context = this.context;
 
     await Provider.of<VentaProvider>(context, listen: false).cargarVentas();
@@ -41,6 +45,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
     await Provider.of<ClienteProvider>(context, listen: false).cargarClientes();
   }
 
+  // Método que muestra la pantalla para registrar nueva venta
   Future<void> _showVentaScreen() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => VentaFormScreen()));
@@ -53,6 +58,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de venta, sucursal y cliente
     final ventaProvider = Provider.of<VentaProvider>(context);
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final clienteProvider = Provider.of<ClienteProvider>(context);
@@ -60,6 +66,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
     final sucursales = sucursalProvider.sucursales;
     final clientes = clienteProvider.clientes;
 
+    // Para filtrar las ventas por sucursal y fecha
     List<Venta> ventasFiltradas = ventaProvider.ventas;
 
     if (_sucursalSeleccionada != null) {
@@ -78,7 +85,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(FlowstockConstants.titleVenta),
+        title: const Text(FlowstockConstants.titleVenta),  // Emplea constantes
       ),
       body: Column(
         children: [
@@ -191,6 +198,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
                               ),
                             );
 
+                            // Card que muestra cada venta
                             return Card(
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
@@ -203,7 +211,7 @@ class _VentaListScreenState extends State<VentaListScreen> {
                                           VentaDetalleScreen(venta: venta),
                                     ),
                                   );
-                                },
+                                },  // Al dar clic muestra la pantalla de consulta de la venta
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Column(

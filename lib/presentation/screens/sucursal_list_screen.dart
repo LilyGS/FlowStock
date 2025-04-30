@@ -17,12 +17,16 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga las sucursales desde el provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<SucursalProvider>(context, listen: false);
       provider.cargarSucursales();
     });
   }
 
+  // Método del diálogo para eliminar la sucursal
   void _confirmarEliminarSucursal(int idSucursal) {
     showDialog(
       context: context,
@@ -61,6 +65,7 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
     );
   }
 
+  // Método para reactivar la sucursal
   void _activarSucursal(int idSucursal) async {
     final provider = Provider.of<SucursalProvider>(context, listen: false);
     await provider.activarSucursal(idSucursal);
@@ -74,6 +79,7 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
     );
   }
 
+  // Método que llama la pantalla para editar la sucursal
   Future<void> _editarSucursal(Sucursal sucursal) async {
     final result = await Navigator.push(
       context,
@@ -88,6 +94,7 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
     }
   }
 
+  // Método que llama la pantalla para registrar nueva sucursal
   Future<void> _showSucursalScreen() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => SucursalFormScreen()));
@@ -100,13 +107,14 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de sucursal
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final sucursales = sucursalProvider.sucursales;
     final isLoading = sucursalProvider.isLoading;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(FlowstockConstants.titleSucursal),
+        title: const Text(FlowstockConstants.titleSucursal),  // Empleo de constantes
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -119,6 +127,8 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final sucursal = sucursales[index];
+
+                      // Card para cada sucursal
                       return Card(
                         color: sucursal.status == 'inactivo'
                             ? Colors.grey[300]
@@ -145,6 +155,8 @@ class _SucursalListScreenState extends State<SucursalListScreen> {
                               )
                             ],
                           ),
+
+                          // Al dar clic se abre pantalla para editar
                           onTap: () => _editarSucursal(sucursal),
                           trailing: sucursal.status == 'activo'
                               ? IconButton(

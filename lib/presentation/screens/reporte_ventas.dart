@@ -13,6 +13,8 @@ class ReporteVentas extends StatefulWidget {
 }
 
 class _ReporteVentasState extends State<ReporteVentas> {
+
+  // Instancia única del DatabaseHelper utilizando el patrón Singleton
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
   List<Map<String, dynamic>> _ventas = [];
   int? _sucursalSeleccionada;
@@ -23,6 +25,8 @@ class _ReporteVentasState extends State<ReporteVentas> {
   void initState() {
     super.initState();
 
+    // Se ejecuta cuando el widget se renderizó
+    // Carga las sucursales y las ventas
     _cargarSucursal();
     _consultarVentas();
   }
@@ -39,6 +43,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
     final condiciones = <String>[];
     final args = <dynamic>[];
 
+    // Filtra las ventas por la sucursal y por la fecha
     if (_sucursalSeleccionada != null) {
       condiciones.add('v.id_sucursal = ?');
       args.add(_sucursalSeleccionada);
@@ -52,6 +57,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
     final where =
         condiciones.isNotEmpty ? 'WHERE ${condiciones.join(' AND ')}' : '';
 
+    // Consulta con los datos necesarios 
     final resultado = await db.rawQuery('''
       SELECT v.id_venta, v.fecha_venta, v.total, v.metodo_pago, 
              s.nombre AS sucursal, c.nombre AS cliente
@@ -86,6 +92,7 @@ class _ReporteVentasState extends State<ReporteVentas> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de sucursal
     final sucursalProvider = Provider.of<SucursalProvider>(context);
     final sucursales = sucursalProvider.sucursales;
     final f = DateFormat('yyyy-MM-dd');
@@ -109,6 +116,8 @@ class _ReporteVentasState extends State<ReporteVentas> {
                           child: Text(s.nombre),
                         )),
                   ],
+
+                  // Al cambiar la sucursal se actualiza la lista
                   onChanged: (val) {
                     setState(() => _sucursalSeleccionada = val);
                     _consultarVentas();

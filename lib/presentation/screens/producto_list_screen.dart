@@ -23,12 +23,16 @@ class _ProductoListScreenState extends State<ProductoListScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga los productos desde el provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<ProductoProvider>(context, listen: false);
       provider.cargarProductos();
     });
   }
 
+  // Método del diálogo para eliminar el producto
   void _confirmarEliminarProducto(int idProducto) {
     showDialog(
       context: context,
@@ -67,6 +71,7 @@ class _ProductoListScreenState extends State<ProductoListScreen> {
     );
   }
 
+  // Método que llama la pantalla para modificar el producto
   Future<void> _editarProducto(Producto producto) async {
     final result = await Navigator.push(
       context,
@@ -81,6 +86,7 @@ class _ProductoListScreenState extends State<ProductoListScreen> {
     }
   }
 
+  // Método que llama la pantalla para registra un nuevo producto
   Future<void> _showProductoScreen() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => ProductoFormScreen()));
@@ -93,13 +99,14 @@ class _ProductoListScreenState extends State<ProductoListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Accede al provider de productos
     final productoProvider = Provider.of<ProductoProvider>(context);
     final productos = productoProvider.productos;
     final isLoading = productoProvider.isLoading;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(FlowstockConstants.titleProducto),
+        title: const Text(FlowstockConstants.titleProducto), // Empleo de constantes
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -112,6 +119,8 @@ class _ProductoListScreenState extends State<ProductoListScreen> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final producto = productos[index];
+
+                      // Card para cada producto
                       return Card(
                         margin: const EdgeInsets.symmetric(
                             vertical: 8, horizontal: 16),

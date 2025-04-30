@@ -17,12 +17,16 @@ class _ClienteListScreenState extends State<ClienteListScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Se ejecuta cuando el widget se renderizó
+    // Carga los clientes desde el provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<ClienteProvider>(context, listen: false);
       provider.cargarClientes();
     });
   }
 
+  // Método para confirmar la eliminación del cliente
   void _confirmarEliminarCliente(int idCliente) {
     showDialog(
       context: context,
@@ -61,6 +65,7 @@ class _ClienteListScreenState extends State<ClienteListScreen> {
     );
   }
 
+  // Método para reactivar el cliente
   void _activarCliente(int idCliente) async {
     final provider = Provider.of<ClienteProvider>(context, listen: false);
     await provider.activarCliente(idCliente);
@@ -74,6 +79,7 @@ class _ClienteListScreenState extends State<ClienteListScreen> {
     );
   }
 
+  // Método para editar el cliente
   Future<void> _editarCliente(Cliente cliente) async {
     final result = await Navigator.push(
       context,
@@ -88,6 +94,7 @@ class _ClienteListScreenState extends State<ClienteListScreen> {
     }
   }
 
+  // Método para mostrar la pantalla y dar de alta un cliente
   Future<void> _showClienteScreen() async {
     final result = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => ClienteFormScreen()));
@@ -170,8 +177,8 @@ class _ClienteListScreenState extends State<ClienteListScreen> {
                 ],
               ),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showClienteScreen,
+      floatingActionButton: FloatingActionButton.extended( 
+        onPressed: _showClienteScreen,  // Muestra la pantalla para dar de alta un cliente
         label: const Text(FlowstockConstants.titleNewCliente),
         icon: const Icon(Icons.add),
       ),

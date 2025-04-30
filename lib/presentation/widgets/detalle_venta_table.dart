@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flow_stock/data/models/producto.dart';
 import 'package:flow_stock/data/models/venta_detalle.dart';
 
+
+// Widget para mostrar, en un formato de tabla, el detalle de la venta
+// Este widget se utiliza en la pantalla de captura de la venta y
+// En la pantalla de consulta de la venta.
+
 class DetalleVentaTable extends StatelessWidget {
   final List<VentaDetalle> detalles;
   final List<Producto> productos;
@@ -13,8 +18,8 @@ class DetalleVentaTable extends StatelessWidget {
     super.key,
     required this.detalles,
     required this.productos,
-    required this.onDelete,
-    this.editable = true, 
+    required this.onDelete,  
+    this.editable = true,  // Cuando se ejecuta en la consulta de la venta, editable es false
   });
 
   @override
